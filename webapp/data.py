@@ -17,9 +17,15 @@ from functools import lru_cache
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-CQI_OUT = os.path.join(ROOT, "cqi_booklet", "output")
+sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "branch_report"))
 import aggregate  # noqa: E402
+import alpha_config  # noqa: E402
+
+# data.output_root in config/project_alpha.yaml: local pipeline output, a Databricks Volume, or a synced copy
+CQI_OUT = alpha_config.path(alpha_config.data("output_root", "cqi_booklet/output"))
+AGENT_OUT = alpha_config.path(alpha_config.data("agent_root", "agent/output"))
+BRANCH_OUT = alpha_config.path(alpha_config.data("branch_report_root", "branch_report/output"))
 
 DECISIONS = {"agree": "Agree with CQI", "agree_changes": "Agree with changes", "disagree": "Disagree", "escalate": "Escalate to MD"}
 
@@ -77,10 +83,26 @@ class Run:
         p = os.path.join(CQI_OUT, self.as_of, "pdf_brief", self.stems[pid] + "_brief.pdf")
         return p if os.path.exists(p) else None
 
+    # ---------------- CQI agent findings (agent/cqi_agent.py)
+    def agent_run(self):
+        """The agent's run summary for this date, or None if the agent has not run."""
+        path = os.path.join(AGENT_OUT, self.as_of, "agent_run.json")
+        if not os.path.exists(path):
+            return None
+        with open(path, encoding="utf-8") as fh:
+            return json.load(fh)
+
+    def opportunities(self):
+        path = os.path.join(AGENT_OUT, self.as_of, "opportunities.json")
+        if not os.path.exists(path):
+            return []
+        with open(path, encoding="utf-8") as fh:
+            return json.load(fh)
+
     def branch_pdf(self, branch):
         import build_branch
         s = self.branches[branch]
-        out = os.path.join(ROOT, "branch_report", "output", self.as_of)
+        out = os.path.join(BRANCH_OUT, self.as_of)
         path = os.path.join(out, f"{s['branch_label'].replace(' ', '_')}_report.pdf")
         if not os.path.exists(path):
             build_branch.run(self.as_of, self.json_dir, out)

@@ -1,7 +1,7 @@
-"""Gemini Flash (or the company gateway) answers for free-text questions, behind the Project Alpha scope filter.
+"""AI answers for free-text questions, behind the Project Alpha scope filter.
 
-Config: webapp/project_alpha_ai_gateway.yaml (backend switch, model, key env var names, filter, prompts, logging).
-Grounding: the selected patient's payload, or the week's branch summaries + roster. Nothing else is sent.
+Config: config/project_alpha.yaml -> llm.provider (gemini | anthropic | gateway | rules), plus scope_filter, answer, logging.
+Grounding: the selected patient's payload, or the week's branch summaries + roster + agent findings. Nothing else is sent.
 """
 from __future__ import annotations
 
@@ -10,32 +10,63 @@ import hashlib
 import json
 import os
 import re
+import sys
 import time
 from datetime import datetime
-
-import yaml
 
 import engine
 import views as V
 from views import e
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-CFG_PATH = os.environ.get("ALPHA_AI_CONFIG", os.path.join(HERE, "project_alpha_ai_gateway.yaml"))
+sys.path.insert(0, os.path.dirname(HERE))
+import alpha_config  # noqa: E402
+
+PROVIDER_LABEL = {"gemini": "Gemini Flash", "anthropic": "Claude Opus", "gateway": "AI gateway", "rules": "Rules only"}
 
 
 def cfg():
-    with open(CFG_PATH, encoding="utf-8") as fh:
-        return yaml.safe_load(fh) or {}
+    return alpha_config.cfg()
+
+
+def llm_cfg():
+    return cfg().get("llm") or {}
+
+
+def provider():
+    return (llm_cfg().get("provider") or "rules").lower()
+
+
+def _key(env_name, *fallbacks):
+    for n in (env_name, *fallbacks):
+        if n and os.environ.get(n):
+            return os.environ[n]
+    return None
+
+
+def _url(section):
+    return (os.environ.get(section.get("base_url_env") or "") or section.get("base_url") or "").strip()
 
 
 def backend_label():
-    c = cfg(); b = c.get("backend", "rules")
-    if b == "gemini":
-        ok = bool(os.environ.get(c["gemini"].get("api_key_env", "GEMINI_API_KEY")) or os.environ.get("GOOGLE_API_KEY"))
-        return f"Gemini Flash · {c['gemini']['model']}" if ok else "Rules only · no Gemini key set"
-    if b == "gateway":
-        return (c.get("gateway") or {}).get("provider_label") or "Company AI gateway"
+    p = provider(); c = llm_cfg().get(p) or {}
+    if p == "gemini":
+        return f"Gemini Flash · {c.get('model')}" if _key(c.get("api_key_env", "GEMINI_API_KEY"), "GOOGLE_API_KEY") else "Rules only · no Gemini key set"
+    if p == "anthropic":
+        via = " via gateway" if _url(c) else ""
+        return f"Claude Opus · {c.get('model')}{via}"
+    if p == "gateway":
+        return f"{c.get('provider_label') or 'AI gateway'} · {c.get('model')}"
     return "Rules only"
+
+
+def approved_for_phi():
+    return bool((llm_cfg().get(provider()) or {}).get("approved_for_phi", False))
+
+
+def max_answer_tokens():
+    c = llm_cfg().get(provider()) or {}
+    return int(c.get("max_output_tokens") or c.get("max_tokens") or 600)
 
 
 # ------------------------------------------------------------------ grounding context
@@ -48,12 +79,14 @@ def patient_context(run, pid):
     meds = dict(ctx.get("medications") or {}); meds.pop("checks", None); ctx["medications"] = meds
     ctx["readiness_snapshot"] = engine.readiness(p)
     ctx["conference_decision"] = run.decisions().get(pid)
+    ctx["agent_opportunities"] = [o for o in run.opportunities() if o.get("patient_id") == pid]
     return json.dumps(ctx, default=str, separators=(",", ":"))
 
 
 def list_context(run, branch=None):
     brs = [branch] if branch else run.branch_ids()
-    out = {"branches": {}, "patients": []}
+    out = {"branches": {}, "patients": [], "agent_opportunities": [o for o in run.opportunities()
+                                                                   if not branch or o.get("branch") == branch][:60]}
     for b in brs:
         s = dict(run.branches[b]); s.pop("patients", None)
         out["branches"][b] = s
@@ -68,7 +101,8 @@ def list_context(run, branch=None):
                                 "actions": (p.get("summary") or {}).get("actions"), "readiness": engine.readiness(p)["recommendation"],
                                 "goals": [(g["goal"], g["status"]) for g in (p.get("goals") or {}).get("items") or []],
                                 "care_network": {x: (p.get("care_network") or {}).get(x) for x in
-                                                 ("has_pcp", "pcp_name", "cwpco_enrolled", "cwrx_enrolled", "refer_cwpco", "refer_cwrx", "active_med_count")},                                "patient_stated_goal": (p.get("goals") or {}).get("patient_stated_goal")})
+                                                 ("has_pcp", "pcp_name", "cwpco_enrolled", "cwrx_enrolled", "refer_cwpco", "refer_cwrx", "active_med_count")},
+                                "patient_stated_goal": (p.get("goals") or {}).get("patient_stated_goal")})
     return json.dumps(out, default=str, separators=(",", ":"))
 
 
@@ -76,17 +110,16 @@ def list_context(run, branch=None):
 def _gemini(c, system, prompt, max_tokens):
     from google import genai
     from google.genai import types
-    g = c["gemini"]
-    key = os.environ.get(g.get("api_key_env", "GEMINI_API_KEY")) or os.environ.get("GOOGLE_API_KEY")
+    key = _key(c.get("api_key_env", "GEMINI_API_KEY"), "GOOGLE_API_KEY")
     if not key:
         raise RuntimeError("no Gemini API key in the environment")
     client = genai.Client(api_key=key, http_options=types.HttpOptions(api_version="v1beta"))  # system_instruction needs v1beta
-    conf = types.GenerateContentConfig(system_instruction=system, temperature=g.get("request", {}).get("temperature", 0.1),
-                                       max_output_tokens=max_tokens, thinking_config=types.ThinkingConfig(thinking_budget=0))
-    tries = int(g.get("request", {}).get("max_retries", 2)) + 1
+    conf = types.GenerateContentConfig(system_instruction=system, temperature=0.1, max_output_tokens=max_tokens,
+                                       thinking_config=types.ThinkingConfig(thinking_budget=0))
+    tries = int(c.get("max_retries", 2)) + 1
     for i in range(tries):
         try:
-            r = client.models.generate_content(model=g["model"], contents=prompt, config=conf)
+            r = client.models.generate_content(model=c["model"], contents=prompt, config=conf)
             return (r.text or "").strip()
         except Exception:
             if i == tries - 1:
@@ -94,29 +127,64 @@ def _gemini(c, system, prompt, max_tokens):
             time.sleep(1.5 * (i + 1))   # rate limit / transient error
 
 
+def _anthropic(c, system, prompt, max_tokens):
+    """Claude via the official Anthropic SDK - direct, or through a gateway that proxies the Messages API (base_url)."""
+    import anthropic
+    kw = {"timeout": float(c.get("timeout_seconds", 60)), "max_retries": int(c.get("max_retries", 2))}
+    key = _key(c.get("api_key_env", "ANTHROPIC_API_KEY"))
+    if key:
+        kw["api_key"] = key                       # otherwise the SDK uses ANTHROPIC_AUTH_TOKEN / an `ant auth login` profile
+    if _url(c):
+        kw["base_url"] = _url(c)
+    if c.get("extra_headers"):
+        kw["default_headers"] = {str(k): str(v) for k, v in c["extra_headers"].items()}
+    client = anthropic.Anthropic(**kw)
+    # Opus 5.5 always thinks (adaptive); thinking counts toward max_tokens, so never send a tiny budget.
+    req = dict(model=c.get("model", "claude-opus-5-5"), max_tokens=max(int(max_tokens), int(c.get("max_tokens", 4000))),
+               system=system, messages=[{"role": "user", "content": prompt}],
+               output_config={"effort": c.get("effort", "low")})
+    if c.get("refusal_fallback", True) and not _url(c):
+        r = client.beta.messages.create(betas=["server-side-fallback-2026-07-01"], fallbacks="default", **req)
+    else:
+        r = client.messages.create(**req)
+    if r.stop_reason == "refusal":
+        cat = getattr(getattr(r, "stop_details", None), "category", None)
+        raise RuntimeError(f"model declined the request ({cat or 'refusal'})")
+    return "".join(b.text for b in r.content if b.type == "text").strip()
+
+
 def _gateway(c, system, prompt, max_tokens):
+    """Any OpenAI-compatible chat endpoint: company AI gateway, Databricks Model Serving, vLLM..."""
+    import ssl
     import urllib.request
-    gw = c["gateway"]; auth = gw.get("auth") or {}
-    headers = {"Content-Type": "application/json", **(gw.get("extra_headers") or {})}
-    tok = os.environ.get(auth.get("token_env") or "")
+    auth = c.get("auth") or {}
+    headers = {"Content-Type": "application/json", **{str(k): str(v) for k, v in (c.get("extra_headers") or {}).items()}}
+    tok = _key(auth.get("token_env"))
     if auth.get("type") == "bearer" and tok:
         headers[auth.get("header_name") or "Authorization"] = f"Bearer {tok}"
     elif auth.get("type") == "api_key_header" and tok:
         headers[auth.get("header_name") or "api-key"] = tok
-    body = {"model": gw["model"], "temperature": gw.get("request", {}).get("temperature", 0.1), "max_tokens": max_tokens,
+    body = {"model": c["model"], "max_tokens": max_tokens,
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}]}
-    req = urllib.request.Request(gw["base_url"].rstrip("/") + gw.get("chat_path", "/chat/completions"), json.dumps(body).encode(), headers)
-    with urllib.request.urlopen(req, timeout=gw.get("request", {}).get("timeout_seconds", 30)) as resp:
+    url = _url(c)
+    if not url or url.startswith("<"):
+        raise RuntimeError("gateway base_url is not set in config/project_alpha.yaml")
+    ca = os.environ.get(c.get("ca_bundle_env") or "")
+    ctx = ssl.create_default_context(cafile=ca) if ca else None
+    req = urllib.request.Request(url.rstrip("/") + c.get("chat_path", "/chat/completions"), json.dumps(body).encode(), headers)
+    with urllib.request.urlopen(req, timeout=c.get("timeout_seconds", 30), context=ctx) as resp:
         return json.loads(resp.read())["choices"][0]["message"]["content"].strip()
 
 
 def call(system, prompt, max_tokens):
-    c = cfg(); b = c.get("backend", "rules")
-    if b == "gemini":
+    p = provider(); c = llm_cfg().get(p) or {}
+    if p == "gemini":
         return _gemini(c, system, prompt, max_tokens)
-    if b == "gateway":
+    if p == "anthropic":
+        return _anthropic(c, system, prompt, max_tokens)
+    if p == "gateway":
         return _gateway(c, system, prompt, max_tokens)
-    raise RuntimeError("AI backend is set to rules only")
+    raise RuntimeError("llm.provider is set to rules")
 
 
 # ------------------------------------------------------------------ scope filter
@@ -184,7 +252,7 @@ def log(row):
     c = cfg().get("logging") or {}
     if not c.get("enabled", True):
         return
-    path = os.path.join(HERE, c.get("path", "output/ai_log.csv"))
+    path = alpha_config.path(c.get("path", "webapp/output/ai_log.csv"))
     os.makedirs(os.path.dirname(path), exist_ok=True)
     new = not os.path.exists(path)
     fields = ["timestamp", "patient_id", "branch", "question", "scope_result", "model", "latency_ms", "context_hash", "answer", "feedback"]
@@ -196,9 +264,9 @@ def log(row):
 def ask(run, q, pid=None, branch=None):
     c = cfg(); t0 = time.time()
     refusal = (c.get("scope_filter") or {}).get("refusal_message", "Project Alpha only answers questions about this conference's patients and data.")
-    if run.sample is False and not (c.get(c.get("backend", ""), {}) or {}).get("approved_for_phi", False):
+    if run.sample is False and not approved_for_phi():
         return engine.Result("AI answers are off for real data", "<p class='pa-lead'>This model is not approved for PHI. "
-                             "Use the suggested questions, or switch the backend to an approved gateway.</p>", mode="refused")
+                             "Use the suggested questions, or set llm.provider to an approved endpoint.</p>", mode="refused")
     try:
         ok, how = scope_check(q)
     except Exception as ex:  # model unreachable -> rules
@@ -214,7 +282,7 @@ def ask(run, q, pid=None, branch=None):
                "Cite the top-level data section in square brackets after each fact, e.g. [vitals], [goals], [care_delivery], [branches]. "
                "End with one line 'SOURCES: ' listing the sections you used.")
     try:
-        txt = call(system, q, (c.get("gemini") or {}).get("request", {}).get("max_output_tokens", 600))
+        txt = call(system, q, max_answer_tokens())
     except Exception as ex:
         return _unavailable(q, ex)
     html_, srcs = to_html(txt)

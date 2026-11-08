@@ -7,3 +7,5 @@ cqi_booklet/output/*
 !cqi_booklet/output/.gitkeep
 webapp/output/
 branch_report/output/
+agent/output/
+data/synced/

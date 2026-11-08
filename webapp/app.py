@@ -19,6 +19,7 @@ sys.path.insert(0, HERE)
 import data  # noqa: E402
 import engine  # noqa: E402
 import llm  # noqa: E402
+import brand_ui  # noqa: E402
 from views import e  # noqa: E402
 
 RUNS = data.runs()
@@ -33,7 +34,7 @@ def _b64(path):
 
 LEAF = f"data:image/png;base64,{_b64(os.path.join(HERE, 'assets', 'centerwell_leaf_t.png'))}"
 INTER = _b64(os.path.join(HERE, "assets", "InterVariable.woff2"))
-SUGGEST = ["Who needs action today?", "Who is ready for discharge?", "How are the branches doing?", "Tell me about 9000123"]
+SUGGEST = ["What did the CQI agent find this week?", "Who needs action today?", "Who is ready for discharge?", "Tell me about 9000123"]
 N_FU = 4
 
 
@@ -43,12 +44,9 @@ def mdy(iso):
 
 def hero_html(as_of):
     r = data.load(as_of)
-    return f"""
-<div class="pa-hero">
-  <img class="pa-leaf" src="{LEAF}" alt="CenterWell">
-  <div class="pa-word">Project <span>Alpha</span></div>
-  <div class="pa-tag">Ask anything about this week’s Patient Conference</div>
-</div>"""
+    return (f"<div class='pa-agent-wrap'>{brand_ui.agent_pill(r.agent_run())}</div>"
+            "<div class='pa-q'>Which patient needs care <span>today</span>?</div>"
+            "<div class='pa-q-sub'>Ask anything about this week’s Patient Conference</div>")
 
 
 def meta_html(as_of):
@@ -58,8 +56,13 @@ def meta_html(as_of):
             f"{len(r.branches)} branches {sample}<br><span class='pa-ai'>✦ {e(llm.backend_label())} · scope-filtered · every answer cites its data</span></div>")
 
 
-def top_html():
-    return f"<div class='pa-top'><img src='{LEAF}'><span>Project <b>Alpha</b></span></div>"
+def header_html(as_of):
+    r = data.load(as_of)
+    return brand_ui.header(LEAF, mdy(as_of), r.sample, llm.backend_label())
+
+
+def splash_html(as_of):
+    return brand_ui.splash(LEAF, data.load(as_of).agent_run())
 
 
 FOOT = ("<div class='pa-foot'>CenterWell Home Health · Clinical Quality Intelligence · Proof of concept · "
@@ -112,7 +115,7 @@ def go_home(as_of):
 
 
 # ------------------------------------------------------------------ CSS (clinician_copilot palette + Inter)
-CSS = f"""
+CSS = brand_ui.CSS + f"""
 @font-face {{ font-family:'Inter'; src:url(data:font/woff2;base64,{INTER}) format('woff2'); font-weight:100 900; font-display:swap; }}
 :root {{ --cw:#0033A1; --cw2:#00257F; --lime:#97D700; --sky:#00B2E3; --teal:#0095C8; --coral:#FF8A80; --amber:#FFB74D; --soft:#b9c9f2; }}
 html, body, gradio-app, .gradio-container {{ background: radial-gradient(1200px 700px at 50% -10%, #0a47c4 0%, var(--cw) 45%, var(--cw2) 100%) fixed !important; }}
@@ -122,7 +125,7 @@ html, body, gradio-app, .gradio-container {{ background: radial-gradient(1200px 
 footer {{ display:none !important; }}
 .block, .form, .gr-group {{ background: transparent !important; border: none !important; box-shadow:none !important; }}
 /* hero */
-.pa-hero {{ text-align:center; padding: 9vh 0 6px; }}
+.pa-hero {{ text-align:center; padding: 4vh 0 6px; }}
 .pa-leaf {{ display:block; margin: 0 auto; height: 92px; animation: pop 1s cubic-bezier(.2,1.4,.4,1) both; filter: drop-shadow(0 6px 22px rgba(0,178,227,.35)); }}
 @keyframes pop {{ from {{ opacity:0; transform: scale(.6) rotate(-12deg); }} }}
 .pa-word {{ font-size: 54px; font-weight: 750; letter-spacing:-1.5px; margin-top: 8px; animation: rise .7s ease .2s both; }}
@@ -229,6 +232,9 @@ with gr.Blocks(title="Project Alpha · CQI Patient Conference") as demo:
     ctx = gr.State({})
     as_of = gr.State(RUNS[0])
 
+    gr.HTML(splash_html(RUNS[0]))
+    gr.HTML(header_html(RUNS[0]))
+
     with gr.Column(visible=True) as hero:
         hero_h = gr.HTML(hero_html(RUNS[0]))
         with gr.Row(elem_classes="pa-searchrow"):
@@ -241,8 +247,6 @@ with gr.Blocks(title="Project Alpha · CQI Patient Conference") as demo:
 
     with gr.Column(visible=False) as results:
         with gr.Row(elem_classes="pa-topbar"):
-            home = gr.Button(value="", elem_classes="pa-home", scale=0, visible=False)
-            gr.HTML(top_html(), elem_classes="pa-tophtml")
             with gr.Row(elem_classes="pa-searchrow top"):
                 q2 = gr.Textbox(show_label=False, container=False, elem_classes="pa-search", scale=10, lines=1, max_lines=1,
                                 placeholder="Ask a follow-up…")

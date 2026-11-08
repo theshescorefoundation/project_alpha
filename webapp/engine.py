@@ -6,6 +6,7 @@ Anything else goes to Gemini Flash through the scope filter (llm.py), grounded i
 from __future__ import annotations
 
 import re
+from collections import Counter
 from dataclasses import dataclass, field
 
 import views as V
@@ -28,6 +29,7 @@ class Result:
 
 
 INTENTS = [  # order matters: first match wins
+    ("agent", r"\bagent\b|care gaps?|opportunit|\bscan|what did .{0,20}find|found this week|resolved"),
     ("network", r"pcp|primary care|referr|cw ?pco|cw ?rx|follow(s|ing)?\b.{0,30}\bafter|who follows|network|clinic"),
     ("discharge", r"discharg|ready|go(ing)? home|recert|readiness"),
     ("today", r"today|urgent|24 ?h|right now|priorit|first|need(s)? (action|attention)|act on|to.?do"),
@@ -142,13 +144,17 @@ def p_overview(run, pid):
     acts = (p.get("summary") or {}).get("actions") or []
     body = (f"<p class='pa-lead'>{e(found)}</p>" + V.bullets([
         f"{V.TIER.get(p['risk']['outcome_risk_level'], ('',))[0]} 60-day hospitalization risk <b>{p['risk']['score']:.2f}</b>"
-        f" (top {100 - int(p['risk'].get('percentile') or 0)}% this run)",
+        f" (top {max(1, 100 - int(p['risk'].get('percentile') or 0))}% this run)",
         f"Day {pt['episode_day']} of {pt['episode_length']} · {pt.get('days_to_episode_end')} days to episode end",
         f"Discharge readiness: <b>{e(s['recommendation'])}</b> ({e(s['confidence'].lower())})",
     ] + ([f"First action: {e(acts[0]['action'])} — <b style='color:{V.WHEN.get(acts[0].get('when'), V.SKY)}'>{e(acts[0].get('when'))}</b>"] if acts else [])))
     panels = [V.patient_card(p, (run.decisions().get(pid) or {}).get("decision") and
                              _dec_label(run.decisions()[pid]["decision"])),
               V.section("Discharge readiness", V.readiness_card(p, s))]
+    opps = [o for o in run.opportunities() if o["patient_id"] == pid]
+    if opps:
+        panels.append(V.section("What the CQI agent found", V.table(["When", "Patient", "Gap", "Finding", "Action", ""], _opp_rows(opps)),
+                                sub=f"{len(opps)} care opportunities this run"))
     return Result(f"{label(run, pid)} · {e(pt['branch_name'].split(' - ')[0].title())}", body, panels,
                   [f"Are {pid}'s vitals stable?", f"Which goals aren't met for {pid}?", f"Why is {pid} on the list?", f"Any falls or ED visits for {pid}?"],
                   ["at_a_glance", "risk_scores", "episodes", "discharge_recommendation"], ctx={"pid": pid, "branch": run.branch_of(pid)})
@@ -324,7 +330,7 @@ def p_risk(run, pid):
     body = (f"<p class='pa-lead'>{e((p.get('summary') or {}).get('headline') or rk.get('rationale') or '')}</p>"
             + V.stat_tiles([(f"{rk['score']:.2f}", f"{V.TIER.get(rk['outcome_risk_level'], ('',))[0]} 60-day risk", V.TIER.get(rk['outcome_risk_level'], ('', V.SKY))[1]),
                             (f"{delta:+.2f}" if delta is not None else "–", "vs. prior run", V.CORAL if (delta or 0) > 0 else V.LIME),
-                            (f"Top {100 - int(rk.get('percentile') or 0)}%", "of scored episodes", V.SKY)]))
+                            (f"Top {max(1, 100 - int(rk.get('percentile') or 0))}%", "of scored episodes", V.SKY)]))
     panels = [V.section("What drives the score", rows or "<span class='pa-dim'>No drivers</span>", sub="Model contributions")]
     if rk.get("rationale"):
         panels.append(V.section("CQI rationale", f"<p>{e(rk['rationale'])}</p>"))
@@ -449,7 +455,57 @@ def b_gaps(run, branch):
                   [], ["Who needs action today?"], ["llm_summary.data_gaps_summary"], ctx={"branch": branch})
 
 
-BRANCH = {"overview": b_overview, "today": b_today, "actions": b_today, "discharge": b_discharge, "visits": b_visits,
+AGENT_LABEL = {"vitals_outside_limits": "Vitals outside limits", "alert_not_escalated": "Alert not escalated", "visits_not_booked": "Visits not booked",
+               "monitoring_gap": "Monitoring gap", "missed_visits": "Missed visits", "high_risk_meds": "High-risk meds",
+               "wound_not_reassessed": "Wound not reassessed", "goals_behind": "Goals behind plan", "decision_window": "Discharge / recert window",
+               "rising_risk": "Rising risk", "no_pcp": "No PCP"}
+
+
+def _opp_rows(opps):
+    return [[f"<b style='color:{V.WHEN.get(o['when'], V.SKY)}'>{e(o['when'])}</b>", f"<b>{e(o['patient_id'])}</b>",
+             e(AGENT_LABEL.get(o["type"], o["type"])) + (f" · {e(o['discipline'])}" if o.get("discipline") else ""),
+             e(o["finding"]), e(o["action"]) + f"<div class='pa-dim small'>{e(o['owner'])}</div>",
+             V.chip("New", V.LIME) if o.get("status") == "new" else V.chip(f"Week {o.get('weeks_open', 2)}", V.AMBER)] for o in opps]
+
+
+def b_agent(run, branch):
+    st = run.agent_run()
+    opps = [o for o in run.opportunities() if not branch or o["branch"] == branch]
+    if not st:
+        return Result("The CQI agent hasn't run for this date", "<p class='pa-lead'>Run <code>agent/cqi_agent.py --as-of "
+                      f"{e(run.as_of)}</code> (or the weekly Databricks job) to scan for care opportunities.</p>",
+                      followups=["Who needs action today?"], mode="data")
+    n24 = [o for o in opps if o["when"] == "Within 24 hrs"]
+    pts = sorted({o["patient_id"] for o in n24})
+    body = (f"<p class='pa-lead'>The CQI agent scanned <b>{st['episodes_scanned']}</b> active episodes and found "
+            f"<b>{len(opps)}</b> care opportunities — <b style='color:{V.CORAL}'>{len(n24)} within 24 hours</b>"
+            + (f" for {', '.join(pts)}" if pts else "") + f". {st['new']} are new this week; {st['resolved']} closed since the last run.</p>")
+    counts = Counter(o["type"] for o in opps)
+    tiles = V.stat_tiles([(st["episodes_scanned"], "episodes scanned", V.SKY), (len(opps), "care opportunities", V.AMBER),
+                          (len(n24), "within 24 hours", V.CORAL), (st["new"], "new this week", V.LIME), (st["resolved"], "resolved", V.LIME)])
+    mix = "".join(V.chip(f"{AGENT_LABEL.get(k, k)} · {n}", V.SOFT) for k, n in counts.most_common())
+    panels = [V.section("What the agent scanned", tiles + f"<div class='pa-chips'>{mix}</div>",
+                        sub=f"Run {e(st['as_of'])} · explained by {e(st.get('explained_by', 'rules'))} · {e(st.get('seconds'))}s"),
+              V.section("Care opportunities, highest priority first", V.table(["When", "Patient", "Gap", "Finding", "Action", ""], _opp_rows(opps[:14])),
+                        sub=f"{len(opps)} total")]
+    if st.get("resolved_items"):
+        panels.append(V.section("Closed since the last run", V.bullets([f"<b>{e(r['patient_id'])}</b> · {e(r['finding'])}" for r in st["resolved_items"]])))
+    return Result("What did the CQI agent find this week?", body, panels,
+                  [f"Tell me about {p}" for p in pts[:2]] + ["Who is ready for discharge?", "How are the branches doing?"],
+                  ["agent/opportunities.json"] + sorted({s for o in opps for s in o.get("sources", [])}), ctx={"branch": branch})
+
+
+def p_agent(run, pid):
+    opps = [o for o in run.opportunities() if o["patient_id"] == pid]
+    body = (f"<p class='pa-lead'>The CQI agent flagged <b>{len(opps)}</b> care opportunit{'y' if len(opps) == 1 else 'ies'} for {pid}.</p>"
+            if opps else f"<p class='pa-lead'>The CQI agent found no open care gaps for {pid} this run.</p>")
+    return Result(f"CQI agent · {pid}", body, [V.section("Care opportunities", V.table(["When", "Patient", "Gap", "Finding", "Action", ""], _opp_rows(opps)))] if opps else [],
+                  [f"Is {pid} ready for discharge?", f"Are {pid}'s vitals stable?"], ["agent/opportunities.json"], ctx={"pid": pid, "branch": run.branch_of(pid)})
+
+
+PATIENT["agent"] = p_agent
+
+BRANCH = {"agent": b_agent, "overview": b_overview, "today": b_today, "actions": b_today, "discharge": b_discharge, "visits": b_visits,
           "vitals": b_vitals, "gaps": b_gaps, "risk": b_overview}
 
 

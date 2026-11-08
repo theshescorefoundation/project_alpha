@@ -2,7 +2,9 @@
 
 Reads ONLY what the original pipeline already has:
   - patient payload JSON written by cqi_booklet/src/build_payloads.py  (CQI cohort detail)
-  - the canonical CSVs in cqi_booklet/data/csv                         (all active episodes)
+  - the canonical datasets (episodes, risk_scores, orders, visits, sched, vs_alerts) for all active episodes:
+    laptop -> the CSVs in cqi_booklet/data/csv; Databricks -> any `load(name)` callable, e.g.
+    pandas_loader(Datasets(..., engine="spark", spark=spark)) reading Unity Catalog tables or parquet paths.
 and returns one summary dict per branch. The branch PDF (build_branch.py) and the Gradio app
 both read this, so the handout and the screen always show the same numbers.
 
@@ -82,6 +84,27 @@ def _csv(name, csv_dir):
     return pd.read_csv(path, dtype={"patient_id": str, "episode_id": str}) if os.path.exists(path) else None
 
 
+def csv_loader(csv_dir=CSV_DIR):
+    """load(name) for the local canonical CSVs."""
+    return lambda name: _csv(name, csv_dir)
+
+
+def pandas_loader(ds):
+    """load(name) over the original dataset registry (cqi_booklet/src/cqi_datasets.Datasets).
+    With engine="spark" it reads csv | table (Unity Catalog) | path (delta / parquet) per datasets.yaml
+    and hands back pandas with canonical column names - pilot-sized branches only."""
+    def load(name):
+        df = ds.load(name)
+        if df is None:
+            return None
+        df = df.toPandas() if hasattr(df, "toPandas") else df
+        for c in ("patient_id", "episode_id"):
+            if c in df:
+                df[c] = df[c].astype("string")
+        return df
+    return load
+
+
 def _dates(df, *cols):
     for c in cols:
         if df is not None and c in df:
@@ -107,24 +130,32 @@ def load_payloads(json_dir):
 
 
 def default_json_dir(as_of):
-    return os.path.join(CQI, "output", as_of, "json")
+    try:
+        import sys
+        sys.path.insert(0, ROOT)
+        import alpha_config
+        return os.path.join(alpha_config.path(alpha_config.data("output_root", "cqi_booklet/output")), as_of, "json")
+    except Exception:
+        return os.path.join(CQI, "output", as_of, "json")
 
 
 # ------------------------------------------------------------------ main roll-up
-def build_branch_summaries(as_of: str, json_dir: str | None = None, csv_dir: str = CSV_DIR) -> dict[str, dict]:
+def build_branch_summaries(as_of: str, json_dir: str | None = None, csv_dir: str = CSV_DIR, load=None) -> dict[str, dict]:
+    """load: optional callable name -> pandas DataFrame (canonical columns). Default: local CSVs in csv_dir."""
     asof = pd.Timestamp(as_of)
+    load = load or csv_loader(csv_dir)
     payloads = load_payloads(json_dir or default_json_dir(as_of))
     if not payloads:
         raise SystemExit(f"No payload JSON found for {as_of}. Run cqi_booklet/src/build_payloads.py --as-of {as_of} first.")
 
-    ep = _dates(_csv("episodes", csv_dir), "episode_start", "episode_end")
+    ep = _dates(load("episodes"), "episode_start", "episode_end")
     ep["episode_status"] = ep["episode_status"].str.upper().str.strip().str.replace(r"[ _]+", "-", regex=True)
     ep["episode_end"] = ep["episode_end"].fillna(ep["episode_start"] + pd.to_timedelta(59, unit="D"))
     ep["branch"] = ep["branch_name"].map(branch_key)
     active = ep[ep["episode_status"].isin(EPI_STATUSES) & (ep["episode_start"] <= asof) & (ep["episode_end"] >= asof)].copy()
     active["current_week"] = ((asof - active["episode_start"]).dt.days // 7 + 1).clip(upper=WEEKS + 1)
 
-    rs = _dates(_csv("risk_scores", csv_dir), "as_of_date")
+    rs = _dates(load("risk_scores"), "as_of_date")
     rs = rs.sort_values(["patient_id", "episode_id", "as_of_date"])
     rs["score_prior"] = rs.groupby(["patient_id", "episode_id"])["score"].shift(1)
     rs = rs[rs["as_of_date"] == asof]
@@ -132,10 +163,10 @@ def build_branch_summaries(as_of: str, json_dir: str | None = None, csv_dir: str
     active = active.merge(rs[["patient_id", "episode_id", "score", "score_prior", "outcome_risk_level"]],
                           on=["patient_id", "episode_id"], how="left")
 
-    orders = _dates(_csv("orders", csv_dir), "effective_dt")
-    visits = _dates(_csv("visits", csv_dir), "visit_dt")
-    sched = _dates(_csv("sched", csv_dir), "sched_dt")
-    alerts = _dates(_csv("vs_alerts", csv_dir), "alert_dt")
+    orders = _dates(load("orders"), "effective_dt")
+    visits = _dates(load("visits"), "visit_dt")
+    sched = _dates(load("sched"), "sched_dt")
+    alerts = _dates(load("vs_alerts"), "alert_dt")
 
     by_branch_payloads = defaultdict(list)
     for p in payloads:

@@ -1,5 +1,6 @@
 gradio>=5
 google-genai
+anthropic
 pyyaml
 pandas
 reportlab
