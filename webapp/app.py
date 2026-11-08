@@ -234,6 +234,7 @@ with gr.Blocks(title="Project Alpha · CQI Patient Conference") as demo:
 
     gr.HTML(splash_html(RUNS[0]))
     gr.HTML(header_html(RUNS[0]))
+    gr.HTML(brand_ui.guide_overlay(os.path.join(os.path.dirname(HERE), "docs", "USER_GUIDE.md")))
 
     with gr.Column(visible=True) as hero:
         hero_h = gr.HTML(hero_html(RUNS[0]))

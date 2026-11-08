@@ -17,7 +17,8 @@ Every week the **CQI agent** scans operational data (visits, vitals, OASIS, goal
 ## 2. The home screen
 | Area | What it shows |
 |---|---|
-| **Header** (top left) | CenterWell **Project Alpha**, "Proof of concept · Sample data", and the CQI run date (top right) |
+| **Header** (top left) | CenterWell **Project Alpha**, "powered by the CQI agent – Alpha for CWHH Clinical Quality Team", and "Proof of concept · Sample data" |
+| **💡 Guide** (top right) | Opens this user guide inside the app; close it with ✕ or by clicking outside it. The CQI run date sits next to it |
 | **Agent status** (green pill) | What the agent found this run, e.g. *"scanned 4 episodes · 20 care opportunities · 8 within 24 h · 5 new"* |
 | **Search box** | Type any question about this week's patients or branches, then press **Enter** or the arrow |
 | **Suggested questions** | One-click starting points |

@@ -24,6 +24,8 @@ _ICON = {
     "home": '<path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
     "chat": '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.4A8 8 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14h4"/>',
     "shield": '<path d="M12 3 4.5 6v6c0 4.4 3.2 7.9 7.5 9 4.3-1.1 7.5-4.6 7.5-9V6z"/><path d="m9 12 2 2 4-4"/>',
+    "bulb": '<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>',
+    "close": '<path d="M18 6 6 18M6 6l12 12"/>',
 }
 
 
@@ -68,7 +70,7 @@ def splash(leaf_src, agent_stats=None):
   <img src="{leaf_src}" alt="CenterWell">
   <div class="pa-splash-title">CenterWell <span>Project Alpha</span></div>
   <div class="pa-splash-tag">Clinical Quality Intelligence for the weekly Patient Conference</div>
-  <div class="pa-splash-app">powered by the CQI care-gap agent</div>
+  <div class="pa-splash-app">powered by the CQI agent &ndash; Alpha for CWHH Clinical Quality Team</div>
   <div class="pa-splash-story">
     <div class="pa-splash-hl" style="animation-delay:{STACK_END:.1f}s">{spans}</div>
     <div class="pa-splash-final" style="animation-delay:{STACK_END + 0.3:.1f}s">
@@ -91,9 +93,33 @@ def header(leaf_src, run_label, sample):
   <div style="flex:1">
     <div class="pa-wordmark">CenterWell <span class="pa-lh">Project Alpha</span> {badge}</div>
     <div class="pa-app">Clinical Quality Intelligence · Weekly Patient Conference</div>
-    <div class="pa-powered">powered by the CQI care-gap agent</div>
+    <div class="pa-powered">powered by the CQI agent &ndash; Alpha for CWHH Clinical Quality Team</div>
   </div>
+  <button class="pa-guide-btn" title="User guide" aria-label="Open the user guide"
+          onclick="document.getElementById('pa-guide').classList.add('open')">{icon('bulb', 20)}<span>Guide</span></button>
   <div class="pa-run">{icon('shield', 15)} CQI run {run_label}</div>
+</div>"""
+
+
+def guide_overlay(md_path):
+    """docs/USER_GUIDE.md rendered as an in-app overlay (opened by the lightbulb in the header).
+    The coordinator setup section is left out - it is for whoever runs the app, not for conference users."""
+    try:
+        from markdown_it import MarkdownIt
+        with open(md_path, encoding="utf-8") as fh:
+            md = fh.read()
+        md = md.split("### For the coordinator")[0].rstrip().rstrip("-").rstrip()
+        body = MarkdownIt("commonmark").enable("table").render(md)
+    except Exception as ex:  # guide missing or renderer unavailable - keep the app working
+        body = f"<p>The user guide could not be loaded ({type(ex).__name__}). See docs/USER_GUIDE.md.</p>"
+    close = "document.getElementById('pa-guide').classList.remove('open')"
+    return f"""
+<div id="pa-guide" class="pa-guide" onclick="if(event.target===this){{{close}}}">
+  <div class="pa-guide-card">
+    <button class="pa-guide-close" title="Close" aria-label="Close the user guide" onclick="{close}">&#10005;</button>
+    <div class="pa-guide-head">{icon('bulb', 22)} <span>How to use Project Alpha</span></div>
+    <div class="pa-guide-body">{body}</div>
+  </div>
 </div>"""
 
 
@@ -117,6 +143,36 @@ CSS = f"""
 .pa-run {{ display:flex; align-items:center; gap:6px; font-size: 12.5px; color:#c9d7ff !important; border:1px solid rgba(255,255,255,.25);
   border-radius: 999px; padding: 6px 12px; white-space: nowrap; }}
 .pa-ico {{ vertical-align: -3px; }}
+/* ---------- user guide (lightbulb, top right) ---------- */
+.pa-guide-btn {{ display:flex; align-items:center; gap:6px; cursor:pointer; background: rgba(151,215,0,.12); border:1px solid rgba(151,215,0,.6);
+  color:{LIME} !important; border-radius: 999px; padding: 6px 13px 6px 10px; font-size: 13px; font-weight: 600; white-space: nowrap; }}
+.pa-guide-btn span {{ color:{LIME} !important; }}
+.pa-guide-btn:hover {{ background: rgba(151,215,0,.25); box-shadow: 0 0 14px rgba(151,215,0,.35); }}
+.pa-guide {{ position: fixed; inset: 0; z-index: 9000; background: rgba(0,12,45,.72); display:none; align-items:flex-start; justify-content:center;
+  padding: 4vh 16px; backdrop-filter: blur(3px); }}
+.pa-guide.open {{ display:flex; animation: pa-rise .25s ease both; }}
+.pa-guide-card {{ position: relative; width: min(920px, 100%); max-height: 92vh; overflow-y: auto; background: #0A3BA8; border: 1px solid rgba(255,255,255,.3);
+  border-radius: 18px; padding: 22px 30px 26px; box-shadow: 0 20px 60px rgba(0,0,0,.45); }}
+.pa-guide-close {{ position: sticky; top: 0; float: right; cursor:pointer; background: rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.3);
+  color:#fff !important; border-radius: 50%; width: 34px; height: 34px; display:flex; align-items:center; justify-content:center; font-size: 16px; line-height: 1; }}
+.pa-guide-close:hover {{ border-color: {LIME}; }}
+.pa-guide-head {{ display:flex; align-items:center; gap:10px; font-size: 22px; font-weight: 700; color:{LIME} !important; margin-bottom: 6px; }}
+.pa-guide-head span {{ color:#fff !important; }}
+.pa-guide-body {{ font-size: 14.5px; line-height: 1.6; color:#e8efff !important; }}
+.pa-guide-body * {{ color:#e8efff !important; }}
+.pa-guide-body h1 {{ display:none; }}
+.pa-guide-body h2 {{ font-size: 18px; margin: 22px 0 8px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.15); color:{LIME} !important; }}
+.pa-guide-body h3 {{ font-size: 15.5px; margin: 16px 0 6px; color:{SKY} !important; }}
+.pa-guide-body strong, .pa-guide-body b {{ color:#fff !important; }}
+.pa-guide-body em {{ color:#cfe0ff !important; }}
+.pa-guide-body blockquote {{ margin: 10px 0; padding: 8px 14px; border-left: 3px solid #FFB74D; background: rgba(255,183,77,.08); border-radius: 0 8px 8px 0; }}
+.pa-guide-body table {{ border: none !important; width:100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 13.5px; }}
+.pa-guide-body th {{ text-align:left; color:#b9c9f2 !important; font-size: 12px; text-transform: uppercase; letter-spacing:.4px; border-bottom: 1px solid rgba(255,255,255,.25);
+  padding: 6px 8px; background: transparent !important; border-left:none !important; border-right:none !important; border-top:none !important; }}
+.pa-guide-body td {{ padding: 7px 8px; border-bottom: 1px solid rgba(255,255,255,.08); vertical-align: top; background: transparent !important; border-left:none !important; border-right:none !important; }}
+.pa-guide-body code {{ background: rgba(255,255,255,.1); border-radius: 5px; padding: 1px 5px; font-size: 12.5px; }}
+.pa-guide-body ul, .pa-guide-body ol {{ padding-left: 22px; }} .pa-guide-body li {{ margin: 4px 0; }}
+.pa-guide-body hr {{ border: none; border-top: 1px solid rgba(255,255,255,.15); }}
 .pa-agent {{ display:inline-flex; align-items:center; gap:8px; margin: 0 auto; padding: 7px 16px; border-radius: 999px; font-size: 13.5px;
   background: rgba(151,215,0,.10); border: 1px solid rgba(151,215,0,.45); color:#e8efff !important; animation: rise .7s ease .15s both; }}
 .pa-agent b {{ color:#fff !important; }} .pa-agent b.hot {{ color:#FF8A80 !important; }} .pa-agent.off {{ border-color: rgba(255,255,255,.25); background: transparent; }}
