@@ -50,6 +50,18 @@ TONE = {"alert": PLUM, "ok": OK_GREEN, "neutral": DARK_GRAY}
 
 def _register_fonts():
     # Arial is the template font; Liberation Sans is metric-compatible on Linux / Databricks
+    # [Project Alpha local-run fix] use the system's own Arial on Windows / macOS first.
+    win = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts") + os.sep
+    for cand, names in ((win, ("arial.ttf", "arialbd.ttf", "ariali.ttf")),
+                        ("/Library/Fonts/", ("Arial.ttf", "Arial Bold.ttf", "Arial Italic.ttf")),
+                        ("/System/Library/Fonts/Supplemental/", ("Arial.ttf", "Arial Bold.ttf", "Arial Italic.ttf"))):
+        if all(os.path.exists(cand + n) for n in names):
+            pdfmetrics.registerFont(TTFont("Arial", cand + names[0]))
+            pdfmetrics.registerFont(TTFont("Arial-Bold", cand + names[1]))
+            pdfmetrics.registerFont(TTFont("Arial-Italic", cand + names[2]))
+            registerFontFamily("Arial", normal="Arial", bold="Arial-Bold", italic="Arial-Italic", boldItalic="Arial-Bold")
+            plt.rcParams["font.family"] = "Arial"
+            return
     for cand in ("/usr/share/fonts/liberation/", "/usr/share/fonts/truetype/liberation/"):
         if os.path.exists(cand + "LiberationSans-Regular.ttf"):
             reg, bold, ital = "LiberationSans-Regular.ttf", "LiberationSans-Bold.ttf", "LiberationSans-Italic.ttf"
