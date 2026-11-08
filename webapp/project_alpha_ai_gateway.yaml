@@ -82,7 +82,8 @@ scope_filter:
       - "pretend (you are|to be)"
       - "write (a|an) (poem|story|essay|song)"
       - "stock|crypto|bitcoin|lottery"
-      - "weather|sports score|recipe"
+      - "weather|sports score|recipe|football|basketball|baseball|movie"
+      - '\b(python|javascript|sql|code|script|program|excel formula)\b'
     # A question passes straight to the answer step (skipping the guard call) if it mentions
     # one of these. Keeps common conference questions fast.
     allow_keywords:
@@ -113,6 +114,14 @@ scope_filter:
       - data gap
       - episode
       - patient
+      - branch
+      - conference
+      - caregiver
+      - at home
+      - cw rx
+      - cw pco
+      - action
+      - staff
 
   guard:
     enabled: true
@@ -125,8 +134,9 @@ scope_filter:
       discharge or recertification readiness, care-plan goals, vitals and trends, visits ordered /
       completed / missed / scheduled, OASIS function, wounds, diagnoses, medications and adherence,
       adverse events and hospitalizations, risk score and drivers, care network and CW PCO / CW Rx
-      referrals, prognosis and rehab potential, patient-stated goals, CQI data gaps, and how to read
-      this app or the CQI booklet.
+      referrals, prognosis and rehab potential, patient-stated goals, living situation and caregiver
+      support, CQI data gaps, branch-level performance and actions (including comparing branches),
+      what the team should prioritise, and how to read this app or the CQI booklet.
 
       OUT_OF_SCOPE: anything else, including general medical advice not tied to these patients,
       questions about people not in the data, coding or IT help, HR, finance, news, entertainment,

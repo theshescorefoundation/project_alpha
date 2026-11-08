@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "project-alpha",
+      "runtimeExecutable": "C:\\Users\\17813\\Documents\\2026\\techdiva_code\\project_alpha\\.venv\\Scripts\\python.exe",
+      "runtimeArgs": ["C:\\Users\\17813\\Documents\\2026\\techdiva_code\\project_alpha\\webapp\\app.py"],
+      "port": 7871
+    }
+  ]
+}
