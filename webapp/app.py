@@ -3,7 +3,7 @@
 Run (from the project_alpha folder):
     .venv\\Scripts\\python webapp\\app.py            -> http://localhost:7871
 Needs the patient payloads from the original pipeline (cqi_booklet/src/build_payloads.py).
-Typed questions use Gemini Flash when GEMINI_API_KEY is set (see project_alpha_ai_gateway.yaml);
+Typed questions use the AI model set in config/project_alpha.yaml (llm.provider);
 everything else is answered straight from the data.
 """
 from __future__ import annotations
@@ -53,12 +53,12 @@ def meta_html(as_of):
     r = data.load(as_of)
     sample = "<span class='pa-pill'>Sample data</span>" if r.sample else ""
     return (f"<div class='pa-meta'>CQI run {mdy(as_of)} · {e(r.conference_label)} · {len(r.patients)} patients on the list · "
-            f"{len(r.branches)} branches {sample}<br><span class='pa-ai'>✦ {e(llm.backend_label())} · scope-filtered · every answer cites its data</span></div>")
+            f"{len(r.branches)} branches {sample}<br><span class='pa-ai'>✦ AI-assisted · answers only from CQI data · every answer cites its source</span></div>")
 
 
 def header_html(as_of):
     r = data.load(as_of)
-    return brand_ui.header(LEAF, mdy(as_of), r.sample, llm.backend_label())
+    return brand_ui.header(LEAF, mdy(as_of), r.sample)
 
 
 def splash_html(as_of):

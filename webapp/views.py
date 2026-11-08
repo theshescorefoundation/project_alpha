@@ -44,7 +44,7 @@ def sources(srcs):
 
 
 def answer_card(title, body_html, srcs=None, mode="data", note=None):
-    badge = ('<span class="pa-badge ai">✦ Gemini Flash · grounded in CQI data</span>' if mode == "ai"
+    badge = ('<span class="pa-badge ai">✦ AI answer · grounded in CQI data</span>' if mode == "ai"
              else '<span class="pa-badge">● From the CQI data</span>' if mode == "data"
              else '<span class="pa-badge warn">Outside Project Alpha’s scope</span>')
     foot = f'<div class="pa-note">{e(note)}</div>' if note else ""

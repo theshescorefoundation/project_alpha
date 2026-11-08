@@ -1,7 +1,7 @@
 """Question engine: one question in, an answer plus the panels that 'unfold' below it.
 
 Recognised questions get a deterministic answer straight from the data (fast, repeatable, cited).
-Anything else goes to Gemini Flash through the scope filter (llm.py), grounded in the same data.
+Anything else goes to the configured AI model through the scope filter (llm.py), grounded in the same data.
 """
 from __future__ import annotations
 
@@ -533,7 +533,7 @@ def answer(run, q, ctx=None, llm=None, blocked=None):
         return BRANCH[intent](run, branch)
     elif branch and intent is None:
         return b_overview(run, branch)
-    # free text -> Gemini (scope-filtered), grounded in the patient or the list
+    # free text -> configured AI model (scope-filtered), grounded in the patient or the list
     if llm is not None:
         return llm(run, q, pid or None, branch)
     return Result("Try asking it another way", "<p class='pa-lead'>I can answer questions about this week's patients and branches: "

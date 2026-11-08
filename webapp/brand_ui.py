@@ -83,7 +83,7 @@ def splash(leaf_src, agent_stats=None):
 </div>"""
 
 
-def header(leaf_src, run_label, sample, model_label):
+def header(leaf_src, run_label, sample):
     badge = '<span class="pa-demo-badge">PROOF OF CONCEPT · SAMPLE DATA</span>' if sample else '<span class="pa-demo-badge">PROOF OF CONCEPT</span>'
     return f"""
 <div class="pa-header">
@@ -91,7 +91,7 @@ def header(leaf_src, run_label, sample, model_label):
   <div style="flex:1">
     <div class="pa-wordmark">CenterWell <span class="pa-lh">Project Alpha</span> {badge}</div>
     <div class="pa-app">Clinical Quality Intelligence · Weekly Patient Conference</div>
-    <div class="pa-powered">powered by the CQI care-gap agent · {model_label}</div>
+    <div class="pa-powered">powered by the CQI care-gap agent</div>
   </div>
   <div class="pa-run">{icon('shield', 15)} CQI run {run_label}</div>
 </div>"""
