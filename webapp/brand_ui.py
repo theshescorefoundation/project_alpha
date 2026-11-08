@@ -97,7 +97,6 @@ def header(leaf_src, run_label, sample):
   </div>
   <button class="pa-guide-btn" title="User guide" aria-label="Open the user guide"
           onclick="document.getElementById('pa-guide').classList.add('open')">{icon('bulb', 20)}<span>Guide</span></button>
-  <div class="pa-run">{icon('shield', 15)} CQI run {run_label}</div>
 </div>"""
 
 
@@ -140,6 +139,7 @@ CSS = f"""
   border-radius: 999px; border: 1px solid #FFB74D; color:#FFB74D !important; font-family: var(--font) !important; }}
 .pa-app {{ font-size: 13.5px; color: #c9d7ff !important; }}
 .pa-powered {{ font-size: 10.5px; letter-spacing: .4px; color: #9fb4e8 !important; }}
+.pa-foot-run {{ color:#c9d7ff !important; font-weight: 600; letter-spacing:.3px; }}
 .pa-run {{ display:flex; align-items:center; gap:6px; font-size: 12.5px; color:#c9d7ff !important; border:1px solid rgba(255,255,255,.25);
   border-radius: 999px; padding: 6px 12px; white-space: nowrap; }}
 .pa-ico {{ vertical-align: -3px; }}

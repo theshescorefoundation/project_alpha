@@ -56,11 +56,23 @@ def detect(q):
     return None
 
 
+ID_TOKEN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._/-]*[A-Za-z0-9]|[A-Za-z0-9]")
+
+
 def find_pid(run, q):
-    for m in re.findall(r"\b\d{7}\b", q):
-        if m in run.patients:
-            return m
+    """Any patient identifier (MRN) on this week's list, whatever its format: digits, letters, dashes...
+    Matched case-insensitively against the patient IDs in the payloads; "MRN123's" and "#MRN123" work too."""
+    ids = {k.lower(): k for k in run.patients}
+    for tok in ID_TOKEN.findall(q):
+        tok = re.sub(r"(?i)'s$", "", tok).lower()
+        if tok in ids:
+            return ids[tok]
     return None
+
+
+def only_an_id(q, pid):
+    """True when the question is just the ID, e.g. '9000123', 'MRN 9000123', 'patient #9000123'."""
+    return re.sub(r"(?i)\b(patient|mrn|id)\b|[#:\s]", "", q).lower() == pid.lower()
 
 
 def label(run, pid):
@@ -521,6 +533,12 @@ def answer(run, q, ctx=None, llm=None, blocked=None):
         return refused()
     pid = find_pid(run, q)
     branch = run.find_branch(q)
+    unknown = re.search(r"\b(?:mrn[\s:#]*)?([A-Za-z]{0,4}\d{5,}[A-Za-z0-9-]*)\b", q, re.I) if not pid else None
+    if unknown and not branch:
+        return Result(f"MRN {e(unknown.group(1))} isn't on this week's CQI list",
+                      "<p class='pa-lead'>Project Alpha covers the patients on this week's CQI list (high or rising risk). "
+                      "Check the MRN for typos, or ask about the list as a whole.</p>",
+                      followups=["How are the branches doing?", "Who needs action today?"], mode="data", srcs=["patient payloads"])
     if pid is None and ctx.get("pid") and PRONOUN.search(q) and not branch:
         pid = ctx["pid"]
     intent = detect(q)
@@ -529,7 +547,7 @@ def answer(run, q, ctx=None, llm=None, blocked=None):
     if pid:
         if intent in PATIENT:
             return PATIENT[intent](run, pid)
-        if intent is None and re.fullmatch(r"\s*(patient\s*)?\d{7}\s*", q, re.I):
+        if intent is None and only_an_id(q, pid):
             return p_overview(run, pid)
     elif intent in BRANCH:
         return BRANCH[intent](run, branch)

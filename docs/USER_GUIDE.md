@@ -17,22 +17,23 @@ Every week the **CQI agent** scans operational data (visits, vitals, OASIS, goal
 ## 2. The home screen
 | Area | What it shows |
 |---|---|
-| **Header** (top left) | CenterWell **Project Alpha**, "powered by the CQI agent – Alpha for CWHH Clinical Quality Team", and "Proof of concept · Sample data" |
-| **💡 Guide** (top right) | Opens this user guide inside the app; close it with ✕ or by clicking outside it. The CQI run date sits next to it |
+| **Header** (top left) | CenterWell **Project Alpha**, "powered by the CQI agent – Alpha for CWHH Clinical Quality Team", and the "Proof of concept" badge |
+| **💡 Guide** (top right) | Opens this user guide inside the app; close it with ✕ or by clicking outside it |
 | **Agent status** (green pill) | What the agent found this run, e.g. *"scanned 4 episodes · 20 care opportunities · 8 within 24 h · 5 new"* |
 | **Search box** | Type any question about this week's patients or branches, then press **Enter** or the arrow |
 | **Suggested questions** | One-click starting points |
-| **Status line** | Run date, conference week, number of patients and branches, "AI-assisted · answers only from CQI data" |
+| **Status line** | Number of patients and branches on this week's list, "AI-assisted · answers only from CQI data" |
+| **Footer** (bottom of every screen) | The CQI run date and conference week the data comes from |
 
 ## 3. Asking questions
-Ask the way you would ask a colleague. Use a patient's **7-digit ID** when the question is about one patient.
+Ask the way you would ask a colleague. For a question about one patient, include the patient's **MRN** as it appears in your records. You can write it on its own (*9000123*) or with a label (*MRN 9000123*, *patient #9000123*). The examples below use sample MRNs.
 
 | You want to know | Try asking |
 |---|---|
 | What needs doing first | *Who needs action today?* |
 | What the agent found | *What did the CQI agent find this week?* |
 | Who could go home | *Who is ready for discharge?* · *Is 9000345 ready for discharge?* |
-| One patient's picture | *Tell me about 9000123* (or just type *9000123*) |
+| One patient's picture | *Tell me about 9000123*, or just type the MRN |
 | Vitals | *Are 9000123's vitals stable?* |
 | Goals | *Which goals aren't met for 9000123?* |
 | Why they're on the list | *Why is 9000123 on the list?* |
@@ -116,7 +117,7 @@ Every PDF page ends with *"Report generated <date> from Project Alpha – Clinic
 | The page doesn't load | Ask the coordinator to start the app, then refresh |
 | "AI answer unavailable" | The AI service is off or unreachable. Recognised questions and the suggested ones still work from the data |
 | "The CQI agent hasn't run for this date" | The weekly agent hasn't run for this CQI date yet. Ask the coordinator |
-| A patient ID isn't recognised | Check the 7-digit ID. Only patients on this week's CQI list are covered |
+| An MRN isn't recognised | Check the MRN for typos. Only patients on this week's CQI list are covered |
 | Numbers look wrong | Note it in the decision notes. The booklet's feedback page and the CQI team use this to improve the data |
 
 ---

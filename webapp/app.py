@@ -57,7 +57,7 @@ def hero_html(as_of):
 def meta_html(as_of):
     r = data.load(as_of)
     sample = "<span class='pa-pill'>Sample data</span>" if show_sample_label(r) else ""
-    return (f"<div class='pa-meta'>CQI run {mdy(as_of)} · {e(r.conference_label)} · {len(r.patients)} patients on the list · "
+    return (f"<div class='pa-meta'>{len(r.patients)} patients on this week's CQI list · "
             f"{len(r.branches)} branches {sample}<br><span class='pa-ai'>✦ AI-assisted · answers only from CQI data · every answer cites its source</span></div>")
 
 
@@ -70,8 +70,11 @@ def splash_html(as_of):
     return brand_ui.splash(LEAF, data.load(as_of).agent_run())
 
 
-FOOT = ("<div class='pa-foot'>CenterWell Home Health · Clinical Quality Intelligence · Proof of concept · "
-        "AI-assisted drafts for clinical review — clinicians make every decision</div>")
+def foot_html(as_of):
+    r = data.load(as_of)
+    return (f"<div class='pa-foot'><span class='pa-foot-run'>CQI run {mdy(as_of)} · {e(r.conference_label)}</span><br>"
+            "CenterWell Home Health · Clinical Quality Intelligence · Proof of concept · "
+            "AI-assisted drafts for clinical review — clinicians make every decision</div>")
 
 
 # ------------------------------------------------------------------ handlers
@@ -274,7 +277,7 @@ with gr.Blocks(title="Project Alpha · CQI Patient Conference") as demo:
             with gr.Row():
                 save = gr.Button("Save decision", elem_classes="pa-save", scale=0)
                 saved = gr.HTML()
-    gr.HTML(FOOT)
+    gr.HTML(foot_html(RUNS[0]))
 
     outs = [hero, results, q2, ans, panels] + fu + dls + [decbox, ctx, dec, owner, due, notes, reviewer, saved]
     for box, btn in ((q1, go1), (q2, go2)):

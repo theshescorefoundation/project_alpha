@@ -214,7 +214,8 @@ def scope_check(q):
     for pat in pf.get("block_patterns") or []:
         if re.search(pat, ql):
             return False, "blocked pattern"
-    if any(k in ql for k in pf.get("allow_keywords") or []) or re.search(r"\b\d{7}\b", q):
+    # a question that names an MRN-like identifier (has digits, 4+ characters) is about a patient - skip the guard call
+    if any(k in ql for k in pf.get("allow_keywords") or []) or re.search(r"\b(?=[\w-]*\d)[\w-]{4,}\b", q):
         return True, "allow keyword"
     g = sf.get("guard") or {}
     if not g.get("enabled", True):
