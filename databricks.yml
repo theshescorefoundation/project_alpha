@@ -46,7 +46,6 @@ resources:
           notebook_task:
             notebook_path: ./databricks/00_resolve_run_date.py
             base_parameters: {as_of_date: "{{job.parameters.as_of_date}}", source: "{{job.parameters.source}}"}
-          libraries: [{pypi: {package: pyyaml}}]
 
         - task_key: build_booklets                    # the ORIGINAL pipeline notebook, unchanged
           depends_on: [{task_key: resolve_run_date}]
@@ -59,8 +58,8 @@ resources:
               branches: "{{job.parameters.branches}}"
               render_pdfs: "yes"
               format: "both"
-          libraries: [{pypi: {package: reportlab}}, {pypi: {package: matplotlib}}, {pypi: {package: jsonschema}},
-                      {pypi: {package: pypdf}}, {pypi: {package: pyyaml}}]
+          # DBR 16.4 LTS already has pandas, matplotlib and PyYAML; only the PDF packages are installed
+          libraries: [{pypi: {package: reportlab}}, {pypi: {package: jsonschema}}, {pypi: {package: pypdf}}]
 
         - task_key: load_decisions                    # conference decisions uploaded from the app -> Delta
           job_cluster_key: alpha
@@ -76,10 +75,10 @@ resources:
               as_of_date: "{{tasks.resolve_run_date.values.as_of_date}}"
               source: "{{job.parameters.source}}"
               branches: "{{job.parameters.branches}}"
-          libraries: [{pypi: {package: reportlab}}, {pypi: {package: matplotlib}}, {pypi: {package: pyyaml}}]
+          libraries: [{pypi: {package: reportlab}}]
 
     # ------------------------------------------------------------------------------------------
-    # LIGHTWEIGHT: the CQI agent only. No PDFs, no AI libraries - pandas (in the runtime) + pyyaml.
+    # LIGHTWEIGHT: the CQI agent only. Installs NOTHING - everything it needs is in DBR 16.4 LTS.
     # Use this when PDF / AI packages can't be installed, or to refresh findings mid-week.
     # ------------------------------------------------------------------------------------------
     project_alpha_agent_only:
@@ -112,7 +111,6 @@ resources:
           notebook_task:
             notebook_path: ./databricks/00_resolve_run_date.py
             base_parameters: {as_of_date: "{{job.parameters.as_of_date}}", source: "{{job.parameters.source}}"}
-          libraries: [{pypi: {package: pyyaml}}]
 
         - task_key: load_decisions
           job_cluster_key: alpha_light
@@ -128,7 +126,7 @@ resources:
               as_of_date: "{{tasks.resolve_run_date.values.as_of_date}}"
               source: "{{job.parameters.source}}"
               branches: "{{job.parameters.branches}}"
-          libraries: [{pypi: {package: pyyaml}}]
+          # no libraries: DBR 16.4 LTS ships Python 3.12, pandas 1.5.3 and PyYAML 6.0.1 - nothing to install
 
 targets:
   dev:

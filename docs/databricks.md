@@ -63,12 +63,14 @@ The detector thresholds and urgency weights live in `config/project_alpha.yaml -
 
 ### Lightweight option: the agent-only job
 `project_alpha_agent_only` runs `resolve_run_date → load_decisions → databricks/03_agent_only.py`.
-- **No PDFs and no AI libraries.** It needs only pandas, which ships with the Databricks runtime, and `pyyaml`.
+- **Installs nothing.** Databricks Runtime **16.4 LTS** already ships everything it needs: Python 3.12.3, pandas 1.5.3, PyYAML 6.0.1 and pyspark. The job has no `libraries` section, so it works even with no PyPI access.
 - **When to use it:**
   - your company won't allow ReportLab, Gradio or the AI SDKs on the cluster;
   - you want to refresh findings mid-week without rebuilding the booklets.
 - **Output:** it writes the same `hsa.cqi_care_opportunities` table and agent files as the full job.
-- **If pip installs are blocked entirely:** check `import yaml` in a notebook on your runtime. If it works, delete the `libraries: [{pypi: {package: pyyaml}}]` lines.
+- **Only the full job installs anything:** `reportlab`, `jsonschema` and `pypdf` for the PDFs. If those are blocked, ask for them on your internal package mirror or Unity Catalog library allowlist, or upload the wheel files to a Volume and point `libraries` at them (`whl: /Volumes/...`).
+- **AI-written briefs with no extra installs:** set `llm.provider: gateway`. The gateway client uses Python's built-in HTTP, so it can call a company AI gateway or a Databricks Model Serving endpoint without any SDK.
+- **Pandas version:** the agent was tested on pandas 3.1 locally and checked line by line for pandas 1.5 compatibility. It has not been run on 1.5.3 itself, so make the first job run a manual one on one pilot branch.
 
 ### Conference decisions: from the app into Databricks
 The app saves every decision to `webapp/output/<run date>/decisions.csv` on the laptop. It adds a row each time, so the full history is kept. Columns:
