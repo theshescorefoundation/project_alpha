@@ -1,6 +1,41 @@
 # Project Alpha
 
-CQI Patient Conference tools:
+CQI Patient Conference tools for the CWHH Clinical Quality team: the weekly CQI care-gap agent, patient booklets, branch reports and a search-first app for the Patient Conference.
+
+## Quick start: run the app
+Windows PowerShell, from the `project_alpha` folder. Needs Python 3.12 or later.
+
+**1. One-time setup.** Create the virtual environment and install the packages:
+```powershell
+python -m venv .venv
+.venv\Scripts\python -m pip install -r cqi_booklet\requirements.txt -r webapp\requirements.txt
+```
+
+**2. Build this week's data** from the sample CSVs (patient payloads + PDF booklets, then the CQI agent):
+```powershell
+cd cqi_booklet
+..\.venv\Scripts\python src\build_payloads.py --as-of 2026-08-15 --sample
+cd ..
+.venv\Scripts\python agent\cqi_agent.py --as-of 2026-08-15
+```
+
+**3. Start the app:**
+```powershell
+.venv\Scripts\python webapp\app.py
+```
+Then open **http://localhost:7871** in Edge or Chrome. The intro screen plays first; click anywhere to skip it. Stop the app with **Ctrl+C** in the terminal.
+
+**4. Optional: AI answers to open questions.** Set the key for the model chosen in `config/project_alpha.yaml` (`llm.provider`) before step 3, for example:
+```powershell
+$env:GEMINI_API_KEY = "<your key>"      # provider: gemini
+$env:ANTHROPIC_API_KEY = "<your key>"   # provider: anthropic (Claude Opus)
+```
+Without a key, everything else still works straight from the data.
+
+How to use the app: the 💡 **Guide** button in the app, or [`docs/USER_GUIDE.md`](docs/USER_GUIDE.md).
+If port 7871 is busy, set `$env:ALPHA_PORT = "7872"` before step 3.
+
+## What's in this repo
 - **`config/project_alpha.yaml`**: **the one file to edit**. It sets where the data and outputs live (laptop or Databricks Volume), which AI model answers questions (`llm.provider: gemini | anthropic | gateway | rules`, plus the gateway URL, model and key env vars), the CQI agent's thresholds, and the scope filter and prompts.
 - **`agent/cqi_agent.py`**: the weekly **CQI care-gap agent**. It scans every active episode (sense, detect, prioritise, explain, publish) and remembers last week's findings. See `docs/databricks.md`.
 - **`databricks.yml` + `databricks/`**: the Databricks Asset Bundle. It defines two weekly jobs, both reading Unity Catalog tables or parquet through the dataset registry:
@@ -18,7 +53,7 @@ CQI Patient Conference tools:
 
 ## Generate the PDF booklets (original pipeline)
 
-One-time setup. A `.venv` is already created and the requirements are installed. To recreate it:
+One-time setup (see Quick start above for the full install):
 ```powershell
 python -m venv .venv
 .venv\Scripts\python -m pip install -r cqi_booklet\requirements.txt
