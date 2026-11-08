@@ -13,6 +13,7 @@ CQI Patient Conference tools:
   - `generated_footer()` adds "Report generated <date> from Project Alpha – Clinical Quality Intelligence" to every page, marked `[Project Alpha]`. The text is `generated_by` in `config/branding.yaml`.
 - **`branch_report/`**: a branch-level roll-up. It produces a 3-page branded PDF per branch on how its patients are doing and what the branch must do this week, plus a summary JSON for the app. See `branch_report/README.md` and `docs/branch_report_spec.md`.
 - **`webapp/`**: the Project Alpha Gradio app. It is search-first: ask one question and the answer opens below it. Run it with `.venv\Scripts\python webapp\app.py` and open http://localhost:7871. See `webapp/README.md`.
+- **`docs/USER_GUIDE.md`**: the **user guide** for clinicians and coordinators: asking questions, reading answers, discharge readiness, recording decisions, downloads, a suggested conference flow, and troubleshooting.
 - **`docs/cqi_review_and_webapp_plan.md`**: the review of the zip and PDF, plus the web app plan.
 
 ## Generate the PDF booklets (original pipeline)

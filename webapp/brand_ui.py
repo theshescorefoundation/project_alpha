@@ -168,5 +168,12 @@ CSS = f"""
 .pa-splash-dots span {{ width:9px; height:9px; border-radius:50%; background:{LIME}; animation: pa-dot 1s ease infinite; }}
 .pa-splash-dots span:nth-child(2) {{ background:{SKY}; animation-delay:.18s; }} .pa-splash-dots span:nth-child(3) {{ background:{GREEN}; animation-delay:.36s; }}
 @keyframes pa-dot {{ 50% {{ transform: translateY(-7px); opacity:.5; }} }}
+.pa-splash {{ overflow: hidden; }}
+@media (max-width: 980px) {{
+  .pa-splash img {{ height: 80px; }} .pa-splash-title {{ font-size: 30px; }} .pa-splash-tag {{ font-size: 14px; text-align:center; padding: 0 16px; }}
+  .pa-splash-hl {{ width: auto; padding: 0 20px; }} .pa-splash-hl span {{ white-space: normal; font-size: 13.5px; align-items: flex-start; }}
+  .pa-hl-t {{ display:inline; }} .pa-splash-final > div:first-child {{ font-size: 22px; padding: 0 16px; }}
+  .pa-final-sub {{ white-space: normal; font-size: 14px; }} .pa-header {{ flex-wrap: wrap; }} .pa-q {{ font-size: 32px; }}
+}}
 .pa-splash-skip {{ position:absolute; bottom: 26px; font-size: 12.5px; color: rgba(255,255,255,.55) !important; letter-spacing: 1px; animation: pa-rise .8s ease 2.5s both; }}
 """
