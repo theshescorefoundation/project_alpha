@@ -38,6 +38,11 @@ SUGGEST = ["What did the CQI agent find this week?", "Who needs action today?", 
 N_FU = 4
 
 
+def show_sample_label(run):
+    """"Sample data" badge: shown for sample runs unless app.show_sample_data_label is false in config/project_alpha.yaml."""
+    return run.sample and (data.alpha_config.cfg().get("app") or {}).get("show_sample_data_label", True)
+
+
 def mdy(iso):
     return f"{iso[5:7]}/{iso[8:10]}/{iso[:4]}"
 
@@ -51,14 +56,14 @@ def hero_html(as_of):
 
 def meta_html(as_of):
     r = data.load(as_of)
-    sample = "<span class='pa-pill'>Sample data</span>" if r.sample else ""
+    sample = "<span class='pa-pill'>Sample data</span>" if show_sample_label(r) else ""
     return (f"<div class='pa-meta'>CQI run {mdy(as_of)} · {e(r.conference_label)} · {len(r.patients)} patients on the list · "
             f"{len(r.branches)} branches {sample}<br><span class='pa-ai'>✦ AI-assisted · answers only from CQI data · every answer cites its source</span></div>")
 
 
 def header_html(as_of):
     r = data.load(as_of)
-    return brand_ui.header(LEAF, mdy(as_of), r.sample)
+    return brand_ui.header(LEAF, mdy(as_of), show_sample_label(r))
 
 
 def splash_html(as_of):

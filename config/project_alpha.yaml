@@ -18,6 +18,13 @@ project:
   environment: dev                       # dev | test | prod
 
 # ---------------------------------------------------------------------------------------------
+# APP DISPLAY
+# ---------------------------------------------------------------------------------------------
+app:
+  show_sample_data_label: false          # false = hide the "Sample data" badge in the app header and home screen
+                                         # (display only - the data, the PDFs and the AI safety checks are unchanged)
+
+# ---------------------------------------------------------------------------------------------
 # DATA
 # The original pipeline (cqi_booklet) already reads every dataset from csv | table | path, set in
 # cqi_booklet/config/datasets.yaml (Unity Catalog tables: `table: catalog.schema.name`;
