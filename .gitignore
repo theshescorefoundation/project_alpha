@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+# generated booklets / payloads / AI logs can contain PHI
+cqi_booklet/output/*
+!cqi_booklet/output/.gitkeep
+webapp/output/
+branch_report/output/
