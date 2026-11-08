@@ -3,7 +3,11 @@
 CQI Patient Conference tools:
 - **`config/project_alpha.yaml`**: **the one file to edit**. It sets where the data and outputs live (laptop or Databricks Volume), which AI model answers questions (`llm.provider: gemini | anthropic | gateway | rules`, plus the gateway URL, model and key env vars), the CQI agent's thresholds, and the scope filter and prompts.
 - **`agent/cqi_agent.py`**: the weekly **CQI care-gap agent**. It scans every active episode (sense, detect, prioritise, explain, publish) and remembers last week's findings. See `docs/databricks.md`.
-- **`databricks.yml` + `databricks/`**: the Databricks Asset Bundle. One weekly job runs the original booklet notebook, then the agent and branch reports, reading Unity Catalog tables or parquet through the dataset registry.
+- **`databricks.yml` + `databricks/`**: the Databricks Asset Bundle. It defines two weekly jobs, both reading Unity Catalog tables or parquet through the dataset registry:
+  - **full job:** the original booklet notebook, then the agent and branch reports;
+  - **agent-only job:** pandas + pyyaml only, no PDF or AI libraries.
+
+  Both first load the conference decisions uploaded from the app into `hsa.cqi_conference_decisions`, so the agent knows each patient's last decision.
 - **`cqi_booklet/`**: the original CQI booklet pipeline (CSVs → payload JSON → fillable PDF booklets). Copied from `cqi_booklet (1).zip` and treated as the reference implementation. It has **two small changes**, both in `src/build_booklet.py`:
   - `_register_fonts()` also finds Arial on Windows and macOS, marked `[Project Alpha local-run fix]`. The original only looked in Linux / Databricks font folders.
   - `generated_footer()` adds "Report generated <date> from Project Alpha – Clinical Quality Intelligence" to every page, marked `[Project Alpha]`. The text is `generated_by` in `config/branding.yaml`.

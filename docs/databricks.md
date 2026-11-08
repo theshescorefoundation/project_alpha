@@ -61,6 +61,32 @@ resolve_run_date  ->  build_booklets (original 01 notebook, unchanged)  ->  cqi_
 
 The detector thresholds and urgency weights live in `config/project_alpha.yaml -> agent`.
 
+### Lightweight option: the agent-only job
+`project_alpha_agent_only` runs `resolve_run_date → load_decisions → databricks/03_agent_only.py`.
+- **No PDFs and no AI libraries.** It needs only pandas, which ships with the Databricks runtime, and `pyyaml`.
+- **When to use it:**
+  - your company won't allow ReportLab, Gradio or the AI SDKs on the cluster;
+  - you want to refresh findings mid-week without rebuilding the booklets.
+- **Output:** it writes the same `hsa.cqi_care_opportunities` table and agent files as the full job.
+- **If pip installs are blocked entirely:** check `import yaml` in a notebook on your runtime. If it works, delete the `libraries: [{pypi: {package: pyyaml}}]` lines.
+
+### Conference decisions: from the app into Databricks
+The app saves every decision to `webapp/output/<run date>/decisions.csv` on the laptop. It adds a row each time, so the full history is kept. Columns:
+- `saved_ts`, `as_of_date`, `branch`, `patient_id`, `episode_id`
+- `decision`: agree / agree_changes / disagree / escalate
+- `action_owner`, `due_date`, `notes_discussion`, `reviewed_by`
+
+These are the same field names as the booklet's fillable form.
+
+1. **After the conference, upload the file** to the decisions Volume:
+   ```bash
+   databricks fs cp webapp/output/2026-08-15/decisions.csv dbfs:/Volumes/hsa/cqi/decisions/2026-08-15/decisions.csv --overwrite
+   ```
+2. **`databricks/04_load_decisions.py`** runs first in both jobs, or on its own. It appends new rows to **`hsa.cqi_conference_decisions`**. Re-running is safe, because rows already loaded (same patient, episode and save time) are skipped.
+3. **Next week's agent** reads each patient's latest decision and attaches it to that patient's findings ("last conference: Escalate to MD (2026-08-15)"). It appears in the brief, the opportunities table (`last_decision`) and the app.
+
+On a laptop the agent reads the app's `decisions.csv` files directly, so no upload is needed.
+
 **Deploy:**
 ```bash
 databricks auth login --host https://<your-workspace>
@@ -70,7 +96,7 @@ databricks bundle run project_alpha_weekly -t dev
 ```
 
 **Before the first run, check every `VERIFY`:**
-- **Volumes and schemas.** Defaults are `/Volumes/hsa/cqi/{booklets,agent,branch_reports}` and `hsa.*` tables. Use PHI-approved locations only.
+- **Volumes and schemas.** Defaults are `/Volumes/hsa/cqi/{booklets,agent,branch_reports,decisions}` and `hsa.*` tables, including `hsa.cqi_conference_decisions`. Use PHI-approved locations only.
 - **`ROOT` in the original `01_build_booklets.py`.** It is hard-coded to `/Workspace/Shared/cqi/cqi_booklet`. Point it at the bundle's `cqi_booklet` folder.
 - **Runtime:** DBR **16.x (Python 3.12+)**. The original pipeline uses Python 3.12 f-string syntax (`cqi_payload.py`), so DBR 15.x (Python 3.11) fails to import it.
 - **Cluster policy, node type, and the notification email.**

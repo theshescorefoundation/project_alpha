@@ -301,6 +301,35 @@ def remember(found, agent_root, as_of):
     return found, resolved, (os.path.basename(os.path.dirname(prev_dirs[-1])) if prev_dirs else None)
 
 
+DECISION_LABEL = {"agree": "Agree with CQI", "agree_changes": "Agree with changes", "disagree": "Disagree", "escalate": "Escalate to MD"}
+
+
+def local_decisions(as_of):
+    """Laptop: every decisions.csv the app saved (webapp/output/<run>/decisions.csv) up to as_of."""
+    rows = []
+    for path in sorted(glob.glob(os.path.join(ROOT, "webapp", "output", "*", "decisions.csv"))):
+        if os.path.basename(os.path.dirname(path)) <= as_of:
+            with open(path, encoding="utf-8") as fh:
+                rows += list(csv.DictReader(fh))
+    return rows
+
+
+def attach_decisions(found, decisions):
+    """Give each finding the patient's most recent conference decision (from the app / the decisions table)."""
+    last = {}
+    for d in decisions or []:
+        k = (str(d.get("patient_id")), str(d.get("episode_id")))
+        if k not in last or str(d.get("saved_ts") or "") > str(last[k].get("saved_ts") or ""):
+            last[k] = d
+    for f in found:
+        d = last.get((f["patient_id"], f["episode_id"]))
+        f["last_decision"] = None if not d else {
+            "decision": DECISION_LABEL.get(d.get("decision"), d.get("decision")), "conference": d.get("as_of_date"),
+            "action_owner": d.get("action_owner") or None, "due_date": d.get("due_date") or None,
+            "notes": d.get("notes_discussion") or None}
+    return len(last)
+
+
 # =============================================================================== 4 EXPLAIN
 def rule_brief(found, branch, n=8):
     mine = [f for f in found if f["branch"] == branch]
@@ -308,7 +337,9 @@ def rule_brief(found, branch, n=8):
     pts = Counter(f["patient_id"] for f in mine)
     lines = [f"**{branch.title()}**: {len(mine)} care opportunities across {len(pts)} patient(s); "
              f"{len(u24)} need action within 24 hours ({sum(1 for f in mine if f['status'] == 'new')} new this week)."]
-    lines += [f"- [{f['when']}] {f['patient_id']}: {f['finding']} → {f['action']} ({f['owner']})" for f in mine[:n]]
+    lines += [f"- [{f['when']}] {f['patient_id']}: {f['finding']} → {f['action']} ({f['owner']})"
+              + (f" · last conference: {f['last_decision']['decision']} ({f['last_decision']['conference']})" if f.get("last_decision") else "")
+              for f in mine[:n]]
     return "\n".join(lines)
 
 
@@ -328,11 +359,11 @@ def publish(out_dir, as_of, found, resolved, briefs, stats):
     with open(os.path.join(out_dir, "opportunities.json"), "w", encoding="utf-8") as fh:
         json.dump(found, fh, indent=1, default=str)
     cols = ["priority", "when", "branch", "patient_id", "episode_id", "type", "discipline", "finding", "action", "owner",
-            "status", "weeks_open", "first_seen", "risk_level", "risk_score", "rising", "days_to_end", "sources", "id"]
+            "status", "weeks_open", "first_seen", "risk_level", "risk_score", "rising", "days_to_end", "last_decision", "sources", "id"]
     with open(os.path.join(out_dir, "opportunities.csv"), "w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=cols, extrasaction="ignore"); w.writeheader()
         for f in found:
-            w.writerow({**f, "sources": ", ".join(f["sources"])})
+            w.writerow({**f, "sources": ", ".join(f["sources"]), "last_decision": (f.get("last_decision") or {}).get("decision") or ""})
     with open(os.path.join(out_dir, "agent_brief.md"), "w", encoding="utf-8") as fh:
         fh.write(f"# CQI agent brief · run {as_of}\n\n" + "\n\n".join(briefs.values())
                  + ("\n\n## Resolved since last run\n" + "\n".join(f"- {r['patient_id']}: {r['finding']}" for r in resolved) if resolved else "") + "\n")
@@ -340,7 +371,8 @@ def publish(out_dir, as_of, found, resolved, briefs, stats):
         json.dump({**stats, "briefs": briefs, "resolved_items": resolved}, fh, indent=1, default=str)
 
 
-def run(as_of=None, load=None, out_root=None, explain=None, cfg=None):
+def run(as_of=None, load=None, out_root=None, explain=None, cfg=None, decisions=None):
+    """decisions: list of conference-decision dicts (Databricks: from the decisions table). Default: the app's local CSVs."""
     t0 = time.time()
     cfg = cfg or alpha_config.cfg().get("agent") or {}
     load = load or A.csv_loader()
@@ -349,6 +381,7 @@ def run(as_of=None, load=None, out_root=None, explain=None, cfg=None):
     as_of = asof.strftime("%Y-%m-%d")
     found = prioritise(detect(asof, act, data, cfg), cfg)                         # 2 + 3
     found, resolved, prev_run = remember(found, out_root, as_of)
+    n_decided = attach_decisions(found, local_decisions(as_of) if decisions is None else decisions)
     explain = cfg.get("explain_with_llm", False) if explain is None else explain  # 4
     briefs = {}
     for b in sorted({f["branch"] for f in found}):
@@ -361,6 +394,7 @@ def run(as_of=None, load=None, out_root=None, explain=None, cfg=None):
              "branches": sorted(act["branch"].unique().tolist()), "opportunities": len(found),
              "within_24h": sum(1 for f in found if f["when"] == "Within 24 hrs"),
              "new": sum(1 for f in found if f["status"] == "new"), "resolved": len(resolved), "previous_run": prev_run,
+             "patients_with_decision": n_decided,
              "by_type": dict(Counter(f["type"] for f in found)), "datasets": DATASETS,
              "explained_by": "llm" if explain else "rules", "seconds": round(time.time() - t0, 2)}
     publish(os.path.join(out_root, as_of), as_of, found, resolved, briefs, stats)  # 5

@@ -62,8 +62,13 @@ resources:
           libraries: [{pypi: {package: reportlab}}, {pypi: {package: matplotlib}}, {pypi: {package: jsonschema}},
                       {pypi: {package: pypdf}}, {pypi: {package: pyyaml}}]
 
+        - task_key: load_decisions                    # conference decisions uploaded from the app -> Delta
+          job_cluster_key: alpha
+          notebook_task:
+            notebook_path: ./databricks/04_load_decisions.py
+
         - task_key: cqi_agent_and_branch_reports
-          depends_on: [{task_key: build_booklets}]
+          depends_on: [{task_key: build_booklets}, {task_key: load_decisions}]
           job_cluster_key: alpha
           notebook_task:
             notebook_path: ./databricks/02_project_alpha_weekly.py
@@ -72,6 +77,58 @@ resources:
               source: "{{job.parameters.source}}"
               branches: "{{job.parameters.branches}}"
           libraries: [{pypi: {package: reportlab}}, {pypi: {package: matplotlib}}, {pypi: {package: pyyaml}}]
+
+    # ------------------------------------------------------------------------------------------
+    # LIGHTWEIGHT: the CQI agent only. No PDFs, no AI libraries - pandas (in the runtime) + pyyaml.
+    # Use this when PDF / AI packages can't be installed, or to refresh findings mid-week.
+    # ------------------------------------------------------------------------------------------
+    project_alpha_agent_only:
+      name: "Project Alpha · CQI agent only"
+      schedule:
+        quartz_cron_expression: "0 0 6 ? * MON"
+        timezone_id: "America/New_York"
+        pause_status: PAUSED
+      email_notifications:
+        on_failure: ["${var.notify}"]
+      parameters:
+        - name: as_of_date
+          default: ""
+        - name: source
+          default: "auto"
+        - name: branches
+          default: ""
+      job_clusters:
+        - job_cluster_key: alpha_light
+          new_cluster:
+            spark_version: "16.4.x-scala2.12"          # VERIFY: Python 3.12+ runtime
+            node_type_id: "Standard_D4ds_v5"          # VERIFY
+            num_workers: 1
+            policy_id: "${var.cluster_policy_id}"
+            spark_env_vars:
+              PROJECT_ALPHA_CONFIG: "/Workspace${workspace.file_path}/config/project_alpha.yaml"
+      tasks:
+        - task_key: resolve_run_date
+          job_cluster_key: alpha_light
+          notebook_task:
+            notebook_path: ./databricks/00_resolve_run_date.py
+            base_parameters: {as_of_date: "{{job.parameters.as_of_date}}", source: "{{job.parameters.source}}"}
+          libraries: [{pypi: {package: pyyaml}}]
+
+        - task_key: load_decisions
+          job_cluster_key: alpha_light
+          notebook_task:
+            notebook_path: ./databricks/04_load_decisions.py
+
+        - task_key: cqi_agent
+          depends_on: [{task_key: resolve_run_date}, {task_key: load_decisions}]
+          job_cluster_key: alpha_light
+          notebook_task:
+            notebook_path: ./databricks/03_agent_only.py
+            base_parameters:
+              as_of_date: "{{tasks.resolve_run_date.values.as_of_date}}"
+              source: "{{job.parameters.source}}"
+              branches: "{{job.parameters.branches}}"
+          libraries: [{pypi: {package: pyyaml}}]
 
 targets:
   dev:

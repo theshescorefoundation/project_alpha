@@ -464,7 +464,9 @@ AGENT_LABEL = {"vitals_outside_limits": "Vitals outside limits", "alert_not_esca
 def _opp_rows(opps):
     return [[f"<b style='color:{V.WHEN.get(o['when'], V.SKY)}'>{e(o['when'])}</b>", f"<b>{e(o['patient_id'])}</b>",
              e(AGENT_LABEL.get(o["type"], o["type"])) + (f" · {e(o['discipline'])}" if o.get("discipline") else ""),
-             e(o["finding"]), e(o["action"]) + f"<div class='pa-dim small'>{e(o['owner'])}</div>",
+             e(o["finding"]) + (f"<div class='pa-dim small'>Last conference: {e(o['last_decision']['decision'])} ({e(o['last_decision']['conference'])})</div>"
+                                if o.get("last_decision") else ""),
+             e(o["action"]) + f"<div class='pa-dim small'>{e(o['owner'])}</div>",
              V.chip("New", V.LIME) if o.get("status") == "new" else V.chip(f"Week {o.get('weeks_open', 2)}", V.AMBER)] for o in opps]
 
 
