@@ -1,0 +1,10 @@
+patient_id,episode_id,as_of_date,goal,discipline,status,evidence
+9000123,7000456,2026-08-15,Verbalize 3 signs of HF exacerbation within 2 weeks,SN,achieved,Teach-back documented DAY+10
+9000123,7000456,2026-08-15,Weigh daily and keep a log,SN,delayed,Log incomplete on 3 of 5 SN visits
+9000123,7000456,2026-08-15,Verbalize anticoagulant bleeding precautions within 3 weeks,SN,in_progress,Partially documented DAY+15
+9000123,7000456,2026-08-15,Safe transfers with walker within 4 weeks,PT,delayed,PT shortfall weeks 4-5
+9000123,7000456,2026-08-15,Home-safety evaluation completed,OT,in_progress,OT evaluation not yet delivered
+9000123,7000456,2026-08-15,MSW consult for social and community resources within 3 weeks,MSW,missed,No MSW visit record
+9000123,7000456,2026-08-15,"Ambulate 150 ft with walker, supervision, within 4 weeks",PT,achieved,150 ft with walker DAY+24
+9000123,7000456,2026-08-15,Independent with lower-body dressing using adaptive equipment,OT,not_started,OT evaluation not delivered
+9000345,7000588,2026-08-15,Ambulate 300 ft with cane within 6 weeks,PT,in_progress,Ambulating 150 ft DAY+36

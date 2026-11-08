@@ -1,0 +1,770 @@
+{
+ "schema_version": "1.8",
+ "meta": {
+  "as_of_date": "2026-08-15",
+  "model_version": "cwhh-tif-60day-v1",
+  "generated_ts": "2026-11-06T23:43:43Z",
+  "run_id": "cqi_20260815_234342",
+  "conference_label": "Week of 08/17/2026",
+  "cohort_label": "High-Risk & Rising-Risk Patients",
+  "sample": true,
+  "llm_model": "<llm-endpoint>",
+  "judge_status": "passed"
+ },
+ "patient": {
+  "patient_id": "9000345",
+  "episode_id": "7000588",
+  "branch_name": "BRANCH 0518 - CENTERWELL HOME HEALTH",
+  "branch_state": "SC",
+  "episode_status": "RECERTIFIED",
+  "admit_type": "NEW ADMISSION",
+  "episode_start": "2026-07-01",
+  "episode_day": 45,
+  "episode_length": 60,
+  "episode_end": "2026-08-29",
+  "days_to_episode_end": 14,
+  "discharge_window": {
+   "flag": true,
+   "days_remaining": 14,
+   "window_days": 14,
+   "label": "Nearing discharge decision"
+  },
+  "clinical_profile": {
+   "comorbidity_adjustment": "None",
+   "functional_impairment": "Medium",
+   "functional_limitations": "AMBULATION, PAIN INTERFERES WITH ACTIVITY",
+   "activities_permitted": "PARTIAL WEIGHT BEARING, CANE, UP AS TOLERATED",
+   "allergies": "ADHESIVE",
+   "mental_status": "ORIENTED",
+   "nutritional_requirements": "REGULAR DIET",
+   "prognosis": "GOOD",
+   "rehab_potential": "GOOD"
+  },
+  "clin_group": "MS_REHAB",
+  "profile": [
+   {
+    "label": "Age band / sex",
+    "value": "70-74 / F"
+   },
+   {
+    "label": "Clinical group",
+    "value": "MS_REHAB"
+   },
+   {
+    "label": "Primary diagnosis",
+    "value": "Presence of right artificial knee joint (Z96.651)"
+   },
+   {
+    "label": "Comorbidities",
+    "value": null
+   },
+   {
+    "label": "Living situation",
+    "value": null
+   },
+   {
+    "label": "Admission type",
+    "value": "New Admission"
+   },
+   {
+    "label": "Acuity level / first visit",
+    "value": "Level 3; first visit DAY+1"
+   }
+  ],
+  "indicators": {
+   "wound": true,
+   "inpatient": false,
+   "death": false,
+   "transfer": false
+  }
+ },
+ "risk": {
+  "outcome_risk_level": "moderate",
+  "score": 0.2,
+  "percentile": 33.3,
+  "score_prior": 0.12,
+  "risk_raised_by_care_gaps": false,
+  "delay_clinical_impact": "low",
+  "outcomes_at_risk": [],
+  "drivers": [
+   {
+    "feature": "m1860_ambulation",
+    "label": "Ambulation needs assistance (OASIS M1860)",
+    "contribution": 0.041
+   },
+   {
+    "feature": "pain_daily",
+    "label": "Daily pain interfering with activity",
+    "contribution": 0.028
+   },
+   {
+    "feature": "dx_knee_tka",
+    "label": "Recent knee replacement",
+    "contribution": 0.019
+   }
+  ],
+  "rationale": "Moderate risk driven by ambulation assistance and daily pain after knee replacement; risk rose this week as pain scores increased."
+ },
+ "summary": {
+  "headline": "Moderate and rising hospitalization risk.",
+  "tiles": [
+   {
+    "key": "care",
+    "status": "Monitor",
+    "points": [
+     "3 ordered visits remain; 3 scheduled",
+     "No visit shortfall to date",
+     "Frequency status: on track"
+    ]
+   },
+   {
+    "key": "risk",
+    "status": "Monitor",
+    "points": [
+     "60-day risk 0.20, top 67%; rising +0.08",
+     "Top drivers: Ambulation needs assistance; Daily pain interfering wi...",
+     "Care gaps not raising risk"
+    ]
+   },
+   {
+    "key": "vitals",
+    "status": "On track",
+    "points": [
+     "Pulse: -6 in 5 wks (76 to 70)",
+     "Systolic BP: -2 in 5 wks (128 to 126)",
+     "Last vitals day 36 (9 days ago)"
+    ]
+   },
+   {
+    "key": "goals",
+    "status": "On track",
+    "points": [
+     "1 care-plan goals: 0 achieved, 1 in progress"
+    ]
+   }
+  ],
+  "actions": [
+   {
+    "action": "Discharge decision due in 14 days: system suggests discharge; confirm as a team",
+    "owner": "CM / Clinician",
+    "when": "This week",
+    "evidence_section": "DC"
+   },
+   {
+    "action": "Check medication understanding with teach-back on high-risk meds (Oxycodone) at the next SN visit",
+    "owner": "SN",
+    "when": "Next SN visit",
+    "evidence_section": "M"
+   },
+   {
+    "action": "Progress gait training and reassess pain plan with MD.",
+    "owner": "PT",
+    "when": "Next visit",
+    "evidence_section": "D"
+   }
+  ]
+ },
+ "care_delivery": {
+  "weeks": 9,
+  "current_week": 7,
+  "disciplines": [
+   {
+    "discipline": "SN",
+    "weeks": [
+     {
+      "week": 1,
+      "ordered": 1,
+      "delivered": 1,
+      "scheduled": 0
+     },
+     {
+      "week": 2,
+      "ordered": 1,
+      "delivered": 1,
+      "scheduled": 0
+     },
+     {
+      "week": 3,
+      "ordered": 0,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 4,
+      "ordered": 0,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 5,
+      "ordered": 0,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 6,
+      "ordered": 0,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 7,
+      "ordered": 0,
+      "delivered": null,
+      "scheduled": 0
+     },
+     {
+      "week": 8,
+      "ordered": 0,
+      "delivered": null,
+      "scheduled": 0
+     },
+     {
+      "week": 9,
+      "ordered": 0,
+      "delivered": null,
+      "scheduled": 0
+     }
+    ]
+   },
+   {
+    "discipline": "PT",
+    "weeks": [
+     {
+      "week": 1,
+      "ordered": 3,
+      "delivered": 3,
+      "scheduled": 0
+     },
+     {
+      "week": 2,
+      "ordered": 3,
+      "delivered": 3,
+      "scheduled": 0
+     },
+     {
+      "week": 3,
+      "ordered": 3,
+      "delivered": 3,
+      "scheduled": 0
+     },
+     {
+      "week": 4,
+      "ordered": 2,
+      "delivered": 2,
+      "scheduled": 0
+     },
+     {
+      "week": 5,
+      "ordered": 2,
+      "delivered": 2,
+      "scheduled": 0
+     },
+     {
+      "week": 6,
+      "ordered": 2,
+      "delivered": 2,
+      "scheduled": 0
+     },
+     {
+      "week": 7,
+      "ordered": 1,
+      "delivered": null,
+      "scheduled": 1
+     },
+     {
+      "week": 8,
+      "ordered": 1,
+      "delivered": null,
+      "scheduled": 1
+     },
+     {
+      "week": 9,
+      "ordered": 1,
+      "delivered": null,
+      "scheduled": 1
+     }
+    ]
+   }
+  ],
+  "frequency_status": "on_track",
+  "schedule_status": "needs_change",
+  "compliance_window_missed": false,
+  "acuity_level": "3",
+  "first_visit_day": 1,
+  "summary": "PT met or exceeded ordered frequency in every completed week, and the SN evaluation and follow-up were completed. Schedule: three PT visits are scheduled for weeks 7-9 against three ordered, but the week 7 visit falls on DAY+46 and needs confirmation after the recertification.",
+  "missed_log": []
+ },
+ "vitals": {
+  "readings": [
+   {
+    "episode_day": 1,
+    "weight": null,
+    "sbp": 128.0,
+    "dbp": 74.0,
+    "pulse": 76.0,
+    "spo2": 97.0,
+    "resp": null,
+    "temp": null
+   },
+   {
+    "episode_day": 8,
+    "weight": null,
+    "sbp": 126.0,
+    "dbp": 76.0,
+    "pulse": 78.0,
+    "spo2": 97.0,
+    "resp": null,
+    "temp": null
+   },
+   {
+    "episode_day": 15,
+    "weight": null,
+    "sbp": 130.0,
+    "dbp": 78.0,
+    "pulse": 74.0,
+    "spo2": 97.0,
+    "resp": null,
+    "temp": null
+   },
+   {
+    "episode_day": 22,
+    "weight": null,
+    "sbp": 124.0,
+    "dbp": 72.0,
+    "pulse": 72.0,
+    "spo2": 97.0,
+    "resp": null,
+    "temp": null
+   },
+   {
+    "episode_day": 36,
+    "weight": null,
+    "sbp": 126.0,
+    "dbp": 74.0,
+    "pulse": 70.0,
+    "spo2": 97.0,
+    "resp": null,
+    "temp": null
+   }
+  ],
+  "limits": {
+   "sbp_high": 160.0,
+   "pulse_high": 100.0,
+   "pulse_low": 50.0,
+   "spo2_low": 90.0,
+   "weight_gain_lb": 5.0
+  },
+  "findings": [
+   {
+    "measure": "Pulse (bpm)",
+    "first": "76",
+    "latest": "70",
+    "change": "-6 in 5 wks",
+    "urgency": "Routine",
+    "interpretation": null
+   },
+   {
+    "measure": "Systolic BP (mmHg)",
+    "first": "128",
+    "latest": "126",
+    "change": "-2 in 5 wks",
+    "urgency": "Routine",
+    "interpretation": null
+   },
+   {
+    "measure": "SpO2 (%)",
+    "first": "97",
+    "latest": "97",
+    "change": "+0 in 5 wks",
+    "urgency": "Routine",
+    "interpretation": null
+   }
+  ],
+  "adequacy": "Vitals are stable across five readings: SBP 124-130, pulse 70-78, SpO2 97%. No escalation is needed; continue routine monitoring at PT visits.",
+  "trajectory": {
+   "class": "stable",
+   "saw": "Pulse 76 -> 70; Systolic BP 128 -> 126; SpO2 97 -> 97.",
+   "flags": "No vitals outside expected range; continue monitoring.",
+   "action_window": "Continue routine monitoring"
+  }
+ },
+ "at_a_glance": {
+  "found": "3 ordered visits remain; 3 scheduled; Pulse: -6 in 5 wks (76 to 70).",
+  "risk": "Moderate 60-day hospitalization risk (0.20); driven by ambulation needs assistance, daily pain interfering with activity, recent knee replacement.",
+  "care_delivery": "3 ordered visits remain; 3 scheduled; No visit shortfall to date; Frequency status: on track.",
+  "trajectory": "Pulse 76 -> 70; Systolic BP 128 -> 126; SpO2 97 -> 97. No vitals outside expected range; continue monitoring.",
+  "flags": "Discharge decision due in 14 days: system suggests discharge; confirm as a team. Check medication understanding with teach-back on high-risk meds (Oxycodone) at the next SN visit."
+ },
+ "goals": {
+  "patient_stated_goal": "Walk to church by myself again.",
+  "items": [
+   {
+    "goal": "Ambulate 300 ft with cane within 6 weeks",
+    "discipline": "PT",
+    "status": "In progress",
+    "evidence": "Ambulating 150 ft DAY+36"
+   }
+  ],
+  "interventions": [
+   {
+    "discipline": "PT",
+    "text": "Progress gait training and reassess pain plan with MD."
+   }
+  ],
+  "alignment": []
+ },
+ "narratives": {
+  "patient_goal": "PATIENT WILL AMBULATE 300 FT WITH CANE ON LEVEL SURFACES WITH MODIFIED INDEPENDENCE WITHIN 6 WEEKS",
+  "profile_risk": "Moderate risk driven by ambulation assistance and daily pain after knee replacement; risk rose this week as pain scores increased.",
+  "vitals_trajectory": "Vitals are stable across five readings: SBP 124-130, pulse 70-78, SpO2 97%. No escalation is needed; continue routine monitoring at PT visits.",
+  "care_delivery": "PT met or exceeded ordered frequency in every completed week, and the SN evaluation and follow-up were completed. Schedule: three PT visits are scheduled for weeks 7-9 against three ordered, but the week 7 visit falls on DAY+46 and needs confirmation after the recertification.",
+  "missed_care": null,
+  "delay_impact": null,
+  "data_gaps": "Recertification on DAY+60 is not reflected in the scheduled-visit data.|Pain scores are referenced in the risk drivers but no pain assessment values are in the payload."
+ },
+ "clinical": {
+  "wound_summary": null,
+  "wounds": [
+   {
+    "wound_id": "W1",
+    "category": "SURGICAL",
+    "wound_class": "S",
+    "extended_type": "SURGICAL WOUND",
+    "location": "KNEE, RT",
+    "description": "SURGICAL INCISION - RIGHT TKA",
+    "stage": null,
+    "first_size": "6x0.4 cm",
+    "latest_size": "0x0 cm",
+    "area_change_pct": -100.0,
+    "healing_status": "Healed",
+    "assessments": 3,
+    "first_day": 1,
+    "last_day": 29
+   }
+  ],
+  "diagnosis_summary": null,
+  "diagnoses": [
+   {
+    "code": "Z96.651",
+    "description": "Presence of right artificial knee joint",
+    "category": "FACTORS INFLUENCING HEALTH",
+    "clinical_group": "MS_REHAB",
+    "diag_or_proc": "D",
+    "onset_exacer": "ONSET",
+    "onset_exacer_day": -3,
+    "is_primary": true
+   },
+   {
+    "code": "0SRC0J9",
+    "description": "Replacement of right knee joint",
+    "category": "PROCEDURE",
+    "clinical_group": "MS_REHAB",
+    "diag_or_proc": "P",
+    "onset_exacer": null,
+    "onset_exacer_day": -3,
+    "is_primary": false
+   }
+  ],
+  "oasis_summary": null,
+  "oasis": [
+   {
+    "item": "M1850",
+    "section": "ADL / IADL",
+    "description": "Transferring",
+    "first": "1 - Transfers with minimal human assistance or device",
+    "latest": "0 - Able to independently transfer",
+    "first_timepoint": "01 - Start of care",
+    "latest_timepoint": "05 - Other follow-up",
+    "changed": true,
+    "key_item": true
+   },
+   {
+    "item": "M1860",
+    "section": "ADL / IADL",
+    "description": "Ambulation / locomotion",
+    "first": "2 - Requires use of a two-handed device (walker)",
+    "latest": "1 - With a one-handed device (cane)",
+    "first_timepoint": "01 - Start of care",
+    "latest_timepoint": "05 - Other follow-up",
+    "changed": true,
+    "key_item": true
+   },
+   {
+    "item": "M1242",
+    "section": "Pain",
+    "description": "Frequency of pain interfering with activity",
+    "first": "3 - Daily but not constantly",
+    "latest": "1 - Less often than daily",
+    "first_timepoint": "01 - Start of care",
+    "latest_timepoint": "05 - Other follow-up",
+    "changed": true,
+    "key_item": true
+   }
+  ]
+ },
+ "discharge_recommendation": {
+  "recommendation": "Discharge",
+  "confidence": "Leaning",
+  "rationale": "Most signals support discharge (5 vs. 2): Vitals stable; Wound healed; Moderate 60-day hospitalization risk (0.20). Still open: Goal not yet met (Ambulate 300 ft with cane within 6 weeks).",
+  "supports_recert": [
+   "Goal not yet met (Ambulate 300 ft with cane within 6 weeks).",
+   "Rehab potential good with goals still progressing."
+  ],
+  "supports_discharge": [
+   "Vitals stable.",
+   "Wound healed.",
+   "Moderate 60-day hospitalization risk (0.20).",
+   "Function improved on OASIS: M1850 1->0, M1860 2->1, M1242 3->1.",
+   "Prognosis good."
+  ],
+  "data_caveats": [
+   "2 data gap(s) to resolve before deciding."
+  ],
+  "next_steps": [
+   "Send the discharge summary to the patient's CW PCO team.",
+   "Confirm a PCP follow-up within 7 days of discharge.",
+   "Reconcile medications and teach back the discharge plan with the patient / caregiver.",
+   "Document the outcome of the unmet goal: Ambulate 300 ft with cane within 6 weeks.",
+   "Complete the discharge OASIS."
+  ],
+  "source": "rules",
+  "days_remaining": 14
+ },
+ "care_network": {
+  "has_pcp": true,
+  "pcp_name": "CenterWell Senior Primary Care - Rock Hill",
+  "pcp_last_visit_days": 26,
+  "ma_eligible": true,
+  "cwpco_enrolled": true,
+  "cwrx_enrolled": false,
+  "nearest_cwpco_clinic": "CenterWell Senior Primary Care - Rock Hill",
+  "nearest_cwpco_miles": 3.1,
+  "cwpco_clinics_10mi": 1,
+  "cwpco_clinics_20mi": 2,
+  "active_med_count": 4,
+  "refer_cwpco": {
+   "indicator": "Already enrolled",
+   "reason": "Patient is a CW PCO patient; send the discharge summary to the CW PCO team."
+  },
+  "refer_cwrx": {
+   "indicator": "Not indicated",
+   "reason": "4 active medications (below 5)."
+  }
+ },
+ "medications": {
+  "summary": null,
+  "active_count": 4,
+  "high_risk": [
+   {
+    "name": "Oxycodone 5 mg PRN",
+    "drug_class": "Opioid",
+    "reason": "Opioid: needs teaching and monitoring"
+   }
+  ],
+  "checks": [
+   {
+    "episode_day": 1,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 2,
+    "discipline": "SN",
+    "understanding": true,
+    "teaching": true,
+    "adherent": true
+   },
+   {
+    "episode_day": 3,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 5,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 8,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 9,
+    "discipline": "SN",
+    "understanding": true,
+    "teaching": false,
+    "adherent": true
+   },
+   {
+    "episode_day": 10,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 12,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 15,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 17,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 19,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 22,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 24,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 29,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 31,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 36,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 38,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 43,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   }
+  ],
+  "adherence_concerns": 0,
+  "visits_with_check": 2,
+  "visits_total": 2,
+  "last_check_day": 9,
+  "flag": "High-risk medications and no medication-understanding check in 36 days."
+ },
+ "care_review": {
+  "assessments_summary": null,
+  "assessments": [
+   {
+    "assessment": "Pain assessment",
+    "discipline": "PT",
+    "count": 6,
+    "last_day": 36
+   },
+   {
+    "assessment": "Knee range of motion",
+    "discipline": "PT",
+    "count": 4,
+    "last_day": 43
+   }
+  ],
+  "interventions_summary": null,
+  "interventions": [
+   {
+    "intervention": "Gait training with cane",
+    "goal": "Ambulate 300 ft with cane within 6 weeks",
+    "discipline": "PT",
+    "count": 6,
+    "last_day": 38
+   }
+  ],
+  "adverse_events_summary": null,
+  "adverse_events": [],
+  "visit_themes": []
+ },
+ "gap_analysis": {
+  "missing_interventions": [],
+  "missing_assessments": [],
+  "visit_goals": []
+ },
+ "kpis": {
+  "visits_completed": 18,
+  "scheduled_visits": 3,
+  "missed_care": 0,
+  "ip_events": 0,
+  "vitals_days": 5
+ },
+ "events": [],
+ "provenance": {
+  "sources": {
+   "risk_scores": "csv",
+   "risk_drivers": "csv",
+   "llm_summary": "csv",
+   "llm_goals": "csv",
+   "alignment": "csv",
+   "episodes": "csv",
+   "patient_profile": "csv",
+   "assessments": "csv",
+   "interventions": "csv",
+   "adverse_events": "csv",
+   "wounds": "csv",
+   "diagnoses": "csv",
+   "oasis": "csv",
+   "care_network": "csv",
+   "medications": "csv",
+   "visits": "csv",
+   "sched": "csv",
+   "orders": "csv",
+   "vitals": "csv",
+   "vs_alerts": "csv",
+   "client_logs": "csv",
+   "ip_events": "csv"
+  },
+  "vitals_days": 5,
+  "goal_count": 1
+ }
+}

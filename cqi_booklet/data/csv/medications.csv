@@ -1,0 +1,16 @@
+patient_id,episode_id,med_name,drug_class,high_risk,start_dt
+9000123,7000456,Apixaban 5 mg BID,Anticoagulant,Y,2026-07-10
+9000123,7000456,Insulin glargine 20 units nightly,Insulin,Y,2026-07-10
+9000123,7000456,Furosemide 40 mg daily,Loop diuretic,N,2026-07-10
+9000123,7000456,Metoprolol succinate 50 mg daily,Beta blocker,N,2026-07-10
+9000123,7000456,Lisinopril 10 mg daily,ACE inhibitor,N,2026-07-10
+9000123,7000456,Atorvastatin 40 mg,Statin,N,2026-07-10
+9000123,7000456,Metformin 500 mg BID,Biguanide,N,2026-07-10
+9000123,7000456,Potassium chloride 20 mEq,Electrolyte,N,2026-07-10
+9000123,7000456,Pantoprazole 40 mg,PPI,N,2026-07-10
+9000123,7000456,Acetaminophen PRN,Analgesic,N,2026-07-10
+9000123,7000456,Docusate PRN,Laxative,N,2026-07-10
+9000345,7000588,Oxycodone 5 mg PRN,Opioid,,2026-07-01
+9000345,7000588,Aspirin 81 mg,Antiplatelet,N,2026-07-01
+9000345,7000588,Celecoxib 200 mg,NSAID,N,2026-07-01
+9000345,7000588,Senna PRN,Laxative,N,2026-07-01

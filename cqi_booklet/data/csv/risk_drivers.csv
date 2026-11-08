@@ -1,0 +1,18 @@
+patient_id,episode_id,as_of_date,feature,label,contribution
+9000123,7000456,2026-08-15,ip_stay_14d_pre_soc,Inpatient stay within 14 days before SOC,0.092
+9000123,7000456,2026-08-15,m1400_dyspnea,Dyspnea with moderate exertion (OASIS M1400),0.071
+9000123,7000456,2026-08-15,dx_hf_primary,Heart failure primary diagnosis,0.058
+9000123,7000456,2026-08-15,med_count_10p_anticoag,10+ medications incl. anticoagulant,0.044
+9000123,7000456,2026-08-15,fall_3m,Fall in the past 3 months,0.037
+9000123,7000456,2026-08-15,lives_alone,"Lives alone, limited caregiver support",0.029
+9000123,7000456,2026-08-15,m1200_vision,Impaired vision (OASIS M1200),0.018
+9000123,7000456,2026-08-15,age_80p,Age 80+,-0.004
+9000231,7000512,2026-08-15,m1400_dyspnea_rest,Dyspnea at rest (OASIS M1400),0.121
+9000231,7000512,2026-08-15,dx_copd_primary,COPD primary diagnosis,0.083
+9000231,7000512,2026-08-15,home_o2,Home oxygen,0.052
+9000231,7000512,2026-08-15,ed_visit_6m,2+ ED visits in 6 months,0.047
+9000231,7000512,2026-08-15,smoker,Current smoker,0.021
+9000345,7000588,2026-08-15,m1860_ambulation,Ambulation needs assistance (OASIS M1860),0.041
+9000345,7000588,2026-08-15,pain_daily,Daily pain interfering with activity,0.028
+9000345,7000588,2026-08-15,dx_knee_tka,Recent knee replacement,0.019
+9000400,7000601,2026-08-15,m1860_ambulation,Ambulation needs assistance (OASIS M1860),0.012

@@ -1,0 +1,4 @@
+patient_id,has_pcp,pcp_name,pcp_last_visit_dt,ma_eligible,cwpco_enrolled,cwrx_enrolled,nearest_cwpco_clinic,nearest_cwpco_miles,cwpco_clinics_10mi,cwpco_clinics_20mi,active_med_count
+9000123,Y,Community Internal Medicine,2026-03-02,Y,N,N,CenterWell Senior Primary Care - Hickory,4.2,2,3,11
+9000231,N,,,Y,N,Y,CenterWell Senior Primary Care - Lenoir,14.8,0,1,8
+9000345,Y,CenterWell Senior Primary Care - Rock Hill,2026-07-20,Y,Y,N,CenterWell Senior Primary Care - Rock Hill,3.1,1,2,4

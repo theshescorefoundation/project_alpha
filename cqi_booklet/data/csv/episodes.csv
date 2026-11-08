@@ -1,0 +1,5 @@
+patient_id,episode_id,episode_start,episode_end,episode_status,admit_type,branch_name,branch_state,clin_group,acuity_level,age,sex,primary_dx,wound_ind,inpat_ind,death_ind,transfers_ind
+9000123,7000456,2026-07-10,2026-09-07,CURRENT,READMISSION,BRANCH 0412 - CENTERWELL HOME HEALTH,NC,MMTA_CARDIAC,2,82,F,"Heart failure, unspecified (I50.9)",N,Y,N,N
+9000231,7000512,2026-07-27,2026-09-24,CURRENT,NEW ADMISSION,BRANCH 0412 - CENTERWELL HOME HEALTH,NC,MMTA_RESPIRATORY,1,77,M,COPD with acute exacerbation (J44.1),N,Y,N,N
+9000345,7000588,2026-07-01,2026-08-29,RECERTIFIED,NEW ADMISSION,BRANCH 0518 - CENTERWELL HOME HEALTH,SC,MS_REHAB,3,71,F,Presence of right artificial knee joint (Z96.651),Y,N,N,N
+9000400,7000601,2026-07-20,2026-09-17,CURRENT,NEW ADMISSION,BRANCH 0518 - CENTERWELL HOME HEALTH,SC,MS_REHAB,3,68,M,Aftercare following joint replacement (Z47.1),N,N,N,N

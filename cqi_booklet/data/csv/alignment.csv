@@ -1,0 +1,6 @@
+patient_id,episode_id,as_of_date,item,type,supports_goal,check,flag
+9000123,7000456,2026-08-15,Furosemide 40 mg daily,Medication,Daily weights / HF goal,Order aligned; weight trend not escalated,Y
+9000123,7000456,2026-08-15,Apixaban 5 mg BID,Medication,Bleeding precautions,Teaching in progress,N
+9000123,7000456,2026-08-15,Digital scale,Supply,Daily weights,"Present, documented DAY+1",N
+9000123,7000456,2026-08-15,Pulse oximeter,Supply,Dyspnea monitoring,Not documented,Y
+9000123,7000456,2026-08-15,Front-wheeled walker,DME,Safe transfers,Present,N

@@ -1,0 +1,5 @@
+patient_id,episode_id,log_dt,log_type,log_note
+9000123,7000456,2026-07-27,PATIENT NOT HOME,Patient not home for SN visit; voicemail left
+9000123,7000456,2026-08-10,RESCHEDULE,Patient requested reschedule; not rebooked
+9000231,7000512,2026-08-10,HOSPITALIZED,"Daughter called: patient in ED overnight, discharged home"
+9000345,7000588,2026-07-21,GENERAL,Equipment delivered

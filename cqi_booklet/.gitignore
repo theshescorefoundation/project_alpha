@@ -1,0 +1,6 @@
+# Generated booklets and payloads can contain PHI - never commit
+output/*
+!output/.gitkeep
+data/snapshots/
+__pycache__/
+*.pyc

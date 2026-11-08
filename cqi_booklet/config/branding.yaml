@@ -1,0 +1,14 @@
+# Booklet text you can change without touching code. Read by src/build_booklet.py at render time.
+stage_label: "Proof of concept"          # footer, every page. Set to "" to hide (e.g. after go-live)
+sample_label: "Sample data"              # added to the footer ONLY when the run uses --sample (synthetic CSVs)
+footer_note: "Internal use only  \u00b7  Contains PHI  \u00b7  AI-assisted drafts for clinical review"
+prepared_for: "CWHH Clinical Quality Team"
+produced_by: "CW Data Science & Applied AI - HH Team"
+vision_today: >-
+  A weekly booklet and Power BI report built from operational data, reviewed by the clinical team in the
+  patient conference. Clinician feedback shapes what comes next.
+vision_production: >-
+  An <b>AI-assisted agent</b> that scans operational data <b>24/7 on clinicians' behalf</b>, surfaces care gaps and
+  opportunities to improve outcomes <b>as they emerge</b>, and brings the right patient to the right clinician
+  while there is still time to act.
+vision_note: "Clinicians stay in charge of every decision."

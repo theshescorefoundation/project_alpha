@@ -1,0 +1,322 @@
+# CQI Booklet - dataset registry
+# ------------------------------------------------------------------------------------------
+# One entry per canonical dataset. Every dataset can be served from:
+#   csv   -> data/csv/<csv>            (local dev, demos, unit tests - DEFAULT today)
+#   table -> spark.table(<table>)       (Unity Catalog / hive tables, e.g. hsa.cqi_*)
+#   path  -> spark.read.format(<format>).load(<path>)   (Lighthouse /tempdata/lvl3 folders)
+#
+# Switch ONE dataset by changing its `source`, or ALL datasets with CQI_SOURCE=table|path|csv.
+# `columns` = canonical name -> type. Downstream code only ever sees canonical names.
+# `rename`  = canonical name -> source column; used ONLY for table/path sources
+#             (CSV files are already in canonical names). Items marked VERIFY are best guesses.
+# Types: string | int | double | date | timestamp | bool
+# ------------------------------------------------------------------------------------------
+version: 1
+defaults:
+  source: csv
+  csv_dir: ../data/csv      # relative to this file
+  format: delta             # for `path` sources
+
+datasets:
+
+  # ---------------------------------------------------------------- CQI outputs (hsa schema)
+  risk_scores:
+    description: Weekly 60-day hospitalization (TIF) risk score per episode; all run dates for trend
+    grain: patient_id, episode_id, as_of_date
+    source: csv
+    csv: risk_scores.csv
+    table: hsa.cqi_risk_scores                      # VERIFY
+    required: true
+    columns: {patient_id: string, episode_id: string, as_of_date: date, score: double, outcome_risk_level: string}
+    rename: {score: risk_score}
+
+  risk_drivers:
+    description: Per-feature contributions (e.g. SHAP) behind each score
+    grain: patient_id, episode_id, as_of_date, feature
+    source: csv
+    csv: risk_drivers.csv
+    table: hsa.cqi_risk_drivers                     # VERIFY
+    required: true
+    columns: {patient_id: string, episode_id: string, as_of_date: date, feature: string, label: string, contribution: double}
+    rename: {feature: feature_name, label: feature_label, contribution: shap_value}
+
+  llm_summary:
+    description: CQI LLM outputs - one row per patient-episode-run (narrative + status flags)
+    grain: patient_id, episode_id, as_of_date
+    source: csv
+    csv: llm_summary.csv
+    table: hsa.cqi_patient_summary                  # VERIFY
+    required: false
+    columns:
+      patient_id: string
+      episode_id: string
+      as_of_date: date
+      frequency_status: string
+      schedule_status: string
+      risk_raised_by_care_gaps: bool
+      delay_clinical_impact: string
+      compliance_window_missed: bool
+      outcomes_at_risk: string          # comma list
+      risk_rationale: string
+      care_delivery_summary: string
+      schedule_summary: string
+      vitals_summary: string
+      profile_risk_summary: string      # "Patient Profile & Risk Summary" (dashboard)
+      missed_care_summary: string       # "Missed Care Summary"
+      delay_impact_explanation: string  # "Clinical Delay Impact Explanation"
+      data_gaps_summary: string         # "Data Gaps Found" - items separated by "|" (as the LLM writes them)
+      assessments_summary: string       # "Assessments performed" narrative
+      interventions_summary: string     # "Interventions performed" narrative
+      adverse_events_summary: string    # "Adverse event summary"
+      visit_themes: string              # visit narrative themes, items separated by "|"
+      missing_interventions_json: string  # [{"goal","intervention","discipline"}] - interventions missing per goal
+      missing_assessments_json: string    # [{"item","type": "Assessment|Vitals","reason"}]
+      visit_goals_json: string            # [{"discipline","visit_goal","supports_goal"}] - visit goals to add
+      glance_found: string              # "What CQI found" one-liner (patient-voice card)
+      glance_risk: string               # At a glance: Risk (predictive model)
+      glance_care_delivery: string      # At a glance: Care delivery
+      glance_trajectory: string         # At a glance: Clinical trajectory
+      cqi_flags: string                 # At a glance: CQI flags (what to do now)
+      vitals_trajectory_class: string   # improving | stable | deteriorating | insufficient_data
+      vitals_saw: string                # Vitals action window: What CQI saw
+      vitals_flags: string              # Vitals action window: What CQI flags
+      action_window: string             # e.g. "Clinician review within 48 hours"
+      wound_summary: string             # Wounds page narrative
+      diagnosis_summary: string         # Diagnoses page narrative
+      oasis_summary: string             # OASIS page narrative
+      discharge_recommendation: string  # Discharge | Discharge with referrals | Recertify | Clinical review (only when nearing discharge)
+      discharge_rationale: string       # why, from the data (<= 400 chars)
+      medication_summary: string        # Medication adherence page narrative
+      care_plan_goal: string            # "Patient Goal" shown on the dashboard (care-plan wording)
+      patient_stated_goal: string
+      interventions_text: string        # "[SN] ... [PT] ..."
+      comorbidities: string
+      living_situation: string
+      headline: string
+      tiles_json: string                # optional JSON array; empty -> rule-based composer
+      actions_json: string
+      vitals_interp_json: string        # {"weight": "...", "spo2": "..."}
+      judge_status: string
+      llm_model: string
+    rename: {outcomes_at_risk: outcome_at_risk, vitals_summary: vitals_trajectory_summary,
+             patient_stated_goal: patient_goal, interventions_text: recommended_interventions,
+             comorbidities: comorbidity_summary, headline: booklet_headline, tiles_json: booklet_tiles_json,
+             actions_json: booklet_actions_json, vitals_interp_json: vitals_interpretation_json,
+             profile_risk_summary: patient_profile_risk_summary, missed_care_summary: missed_care_summary,
+             delay_impact_explanation: clinical_delay_impact_explanation, data_gaps_summary: data_gaps_found, care_plan_goal: patient_goal_careplan,
+             assessments_summary: assessments_performed_summary, interventions_summary: interventions_performed_summary,
+             adverse_events_summary: adverse_event_summary, visit_themes: visit_narrative_themes,
+             missing_interventions_json: missing_interventions_per_goal, missing_assessments_json: missing_assessments_vitals,
+             visit_goals_json: recommended_visit_goals,
+             glance_found: cqi_found_summary, glance_risk: glance_risk_summary, glance_care_delivery: glance_care_summary,
+             glance_trajectory: glance_trajectory_summary, cqi_flags: cqi_flags, vitals_trajectory_class: vitals_trajectory_class,
+             vitals_saw: vitals_what_cqi_saw, vitals_flags: vitals_what_cqi_flags, action_window: action_window,
+             wound_summary: wound_summary, diagnosis_summary: diagnosis_summary, oasis_summary: oasis_summary,
+             discharge_recommendation: discharge_recommendation, discharge_rationale: discharge_rationale,
+             medication_summary: medication_safety_summary}   # VERIFY all source names
+
+  llm_goals:
+    description: Goal inventory extracted from care plan / goals
+    grain: patient_id, episode_id, as_of_date, goal
+    source: csv
+    csv: llm_goals.csv
+    table: hsa.cqi_patient_goals                    # VERIFY
+    required: false
+    columns: {patient_id: string, episode_id: string, as_of_date: date, goal: string, discipline: string, status: string, evidence: string}
+    rename: {goal: goal_text, status: goal_status}
+
+  alignment:
+    description: Expected vs provided meds / supplies / DME linked to goals (not built yet in prod)
+    grain: patient_id, episode_id, as_of_date, item
+    source: csv
+    csv: alignment.csv
+    table: hsa.cqi_expected_meds_supplies           # VERIFY - may not exist yet
+    required: false
+    columns: {patient_id: string, episode_id: string, as_of_date: date, item: string, type: string,
+              supports_goal: string, check: string, flag: bool}
+    rename: {item: item_name, type: item_type, supports_goal: linked_goal, check: alignment_check, flag: needs_review}
+
+  # ---------------------------------------------------------------- Lighthouse lvl3
+  episodes:
+    description: Episode header + patient demographics
+    grain: patient_id, episode_id
+    source: csv
+    csv: episodes.csv
+    path: /tempdata/lvl3/client_episodes_all
+    required: true
+    columns: {patient_id: string, episode_id: string, episode_start: date, episode_end: date, episode_status: string, admit_type: string,
+              branch_name: string, branch_state: string, clin_group: string, acuity_level: string,
+              age: int, sex: string, primary_dx: string,
+              wound_ind: bool, inpat_ind: bool, death_ind: bool, transfers_ind: bool}
+    rename: {episode_status: EPI_STATUS, admit_type: EPI_ADMITTYPE, branch_name: BRANCHNAME, branch_state: BRANCH_STATE,
+             sex: gender, primary_dx: primary_dx_desc, episode_end: EPI_END}   # VERIFY EPI_END; if missing, end = start + 59 days
+
+  patient_profile:
+    description: Clinical profile from the 485 / OASIS (dashboard "Patient Profile" page)
+    grain: patient_id, episode_id
+    source: csv
+    csv: patient_profile.csv
+    path: /tempdata/lvl3/client_episode_485_profile     # VERIFY - or the table behind the Power BI Patient Profile page
+    required: false
+    columns: {patient_id: string, episode_id: string, comorbidity_adjustment: string, functional_impairment: string,
+              functional_limitations: string, activities_permitted: string, allergies: string, mental_status: string,
+              nutritional_requirements: string, prognosis: string, rehab_potential: string}
+    rename: {functional_impairment: functional_impairement, functional_limitations: "Functional Limitations",
+             activities_permitted: "Activities Permitted", allergies: Allergies, mental_status: "Mental Statuses",
+             nutritional_requirements: "Nutritional Requirements", prognosis: Prognosis, rehab_potential: "Rehab Potential"}   # VERIFY
+
+  assessments:
+    description: Assessments performed at visits (OASIS / clinical assessments), long format
+    grain: patient_id, episode_id, assess_dt, assessment
+    source: csv
+    csv: assessments.csv
+    path: /tempdata/lvl3/client_episode_visit_assessments   # VERIFY
+    required: false
+    columns: {patient_id: string, episode_id: string, assess_dt: date, assessment: string, discipline: string}
+    rename: {assessment: assessment_name}
+
+  interventions:
+    description: Interventions performed at visits, optionally linked to a care-plan goal
+    grain: patient_id, episode_id, intervention_dt, intervention
+    source: csv
+    csv: interventions.csv
+    path: /tempdata/lvl3/client_episode_visit_interventions   # VERIFY
+    required: false
+    columns: {patient_id: string, episode_id: string, intervention_dt: date, intervention: string, discipline: string, goal: string}
+    rename: {intervention: intervention_desc, goal: goal_text}
+
+  adverse_events:
+    description: Adverse events during the episode (falls, medication events, wound deterioration, infection, ED / IP)
+    grain: patient_id, episode_id, event_dt, event_type
+    source: csv
+    csv: adverse_events.csv
+    path: /tempdata/lvl3/events                               # VERIFY
+    required: false
+    columns: {patient_id: string, episode_id: string, event_dt: date, event_type: string, severity: string, detail: string}
+    rename: {event_type: event_category, detail: event_desc}
+
+  wounds:
+    description: Wound assessments, one row per wound per assessment (dashboard "Patient Profile - Wounds")
+    grain: patient_id, episode_id, wound_id, assess_dt
+    source: csv
+    csv: wounds.csv
+    path: /tempdata/lvl3/client_episode_wounds                 # VERIFY
+    required: false
+    columns: {patient_id: string, episode_id: string, wound_id: string, assess_dt: date, wound_category: string,
+              wound_class: string, extended_type: string, location: string, description: string, stage: string,
+              length_cm: double, width_cm: double, depth_cm: double, healing_status: string}
+    rename: {wound_category: WCI_NAME, wound_class: WCI_WOUNDCLASS, extended_type: CW_EXTENDEDWOUNDTYPE,
+             location: ALI_SHORTNAME, description: WTI_DESCRIPTION}   # VERIFY wound_id / measurement columns
+
+  diagnoses:
+    description: Diagnoses and procedures (dashboard "Patient Profile - Diagnosis & Procedures")
+    grain: patient_id, episode_id, code
+    source: csv
+    csv: diagnoses.csv
+    path: /tempdata/lvl3/client_episode_diagnosis_procedures   # VERIFY
+    required: false
+    columns: {patient_id: string, episode_id: string, code: string, description: string, category: string,
+              clinical_group: string, diag_or_proc: string, onset_exacer: string, onset_exacer_dt: date, is_primary: bool}
+    rename: {code: diag_prod_cd, description: diag_desc, category: diag_category, onset_exacer: onset_exacer_flg,
+             is_primary: primary_diag_ind}
+
+  oasis:
+    description: OASIS answers in long format, one row per item per assessment (flatten oasis_event_desc JSON - see notebooks/00)
+    grain: patient_id, episode_id, assessment_id, item
+    source: csv
+    csv: oasis.csv
+    table: hsa.cqi_oasis_items                                  # built by notebooks/00_datasets_setup (VERIFY)
+    required: false
+    columns: {patient_id: string, episode_id: string, assessment_id: string, assess_dt: date, timepoint: string,
+              item: string, section: string, description: string, answer: string}
+    rename: {item: om_monumber_c, section: parent_section_title, description: OM_DESCRIPTION, answer: CEOA_ANSWER,
+             timepoint: oasis_event_type_long, assess_dt: event_date}
+
+  care_network:
+    description: PCP, CenterWell Primary Care (CW PCO) and CenterWell Pharmacy (CW Rx) enrollment and clinic distance
+    grain: patient_id
+    source: csv
+    csv: care_network.csv
+    table: hsa.cqi_care_network                                 # VERIFY - Humana / CW enterprise data
+    required: false
+    columns: {patient_id: string, has_pcp: bool, pcp_name: string, pcp_last_visit_dt: date, ma_eligible: bool,
+              cwpco_enrolled: bool, cwrx_enrolled: bool, nearest_cwpco_clinic: string, nearest_cwpco_miles: double,
+              cwpco_clinics_10mi: int, cwpco_clinics_20mi: int, active_med_count: int}
+
+  medications:
+    description: Active medication profile for the episode, with high-risk flag
+    grain: patient_id, episode_id, med_name
+    source: csv
+    csv: medications.csv
+    path: /tempdata/lvl3/client_episode_medications            # VERIFY
+    required: false
+    columns: {patient_id: string, episode_id: string, med_name: string, drug_class: string, high_risk: bool, start_dt: date}
+    rename: {med_name: medication_name, drug_class: therapeutic_class, high_risk: high_risk_med_ind}   # VERIFY
+
+  visits:
+    description: Completed / missed visits
+    grain: visit_id
+    source: csv
+    csv: visits.csv
+    path: /tempdata/lvl3/client_episode_visits_all
+    required: true
+    columns: {patient_id: string, episode_id: string, visit_id: string, visit_dt: date, visit_type: string,
+              visit_status: string, missed_reason: string, med_understanding: bool, med_teaching: bool, med_adherent: bool}
+    rename: {visit_type: CEVN_VISITTYPE, med_understanding: MED_UNDERSTANDING_PERFORMED,
+             med_teaching: MED_TEACHING_PERFORMED, med_adherent: MED_TAKEN_AS_PRESCRIBED}   # VERIFY the medication columns
+
+  sched:
+    description: Future scheduled visits
+    grain: patient_id, episode_id, sched_dt, visit_type
+    source: csv
+    csv: sched.csv
+    path: /tempdata/lvl3/client_sched_visits
+    required: true
+    columns: {patient_id: string, episode_id: string, sched_dt: date, visit_type: string}
+
+  orders:
+    description: 485 discipline frequency orders, e.g. "3W1, 2W2, 1W6"
+    grain: patient_id, episode_id, discipline, effective_dt
+    source: csv
+    csv: orders.csv
+    path: /tempdata/lvl3/client_episode_orders_485  # VERIFY
+    required: true
+    columns: {patient_id: string, episode_id: string, discipline: string, frequency: string, effective_dt: date}
+
+  vitals:
+    description: Vitals in long format; BP may arrive as "152/86"
+    grain: patient_id, episode_id, visit_dt, vital_name
+    source: csv
+    csv: vitals.csv
+    path: /tempdata/lvl3/client_episode_visit_vitals   # VERIFY
+    required: false
+    columns: {patient_id: string, episode_id: string, visit_dt: date, vital_name: string, vital_value: string}
+
+  vs_alerts:
+    description: Vital-sign parameter alerts
+    grain: patient_id, episode_id, alert_dt, alert_text
+    source: csv
+    csv: vs_alerts.csv
+    path: /tempdata/lvl3/client_episode_visit_vs_alerts
+    required: false
+    columns: {patient_id: string, episode_id: string, alert_dt: date, alert_text: string, physician_notified: bool}
+    rename: {alert_text: alert_desc}
+
+  client_logs:
+    description: Client log notes (missed visit, not home, reschedule...)
+    grain: patient_id, episode_id, log_dt
+    source: csv
+    csv: client_logs.csv
+    path: /tempdata/lvl3/client_logs                 # VERIFY
+    required: false
+    columns: {patient_id: string, episode_id: string, log_dt: date, log_type: string, log_note: string}
+    rename: {log_type: client_log_note_type, log_note: note_text}
+
+  ip_events:
+    description: Inpatient admissions (patient grain)
+    grain: patient_id, admit_dt
+    source: csv
+    csv: ip_events.csv
+    path: /tempdata/lvl3/inpatient_events            # VERIFY
+    required: false
+    columns: {patient_id: string, admit_dt: date, event_desc: string}

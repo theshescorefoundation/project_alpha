@@ -1,0 +1,33 @@
+patient_id,episode_id,assess_dt,assessment,discipline
+9000123,7000456,2026-07-11,Cardiopulmonary assessment,SN
+9000123,7000456,2026-07-11,Edema assessment,SN
+9000123,7000456,2026-07-13,Cardiopulmonary assessment,SN
+9000123,7000456,2026-07-13,Edema assessment,SN
+9000123,7000456,2026-07-15,Cardiopulmonary assessment,SN
+9000123,7000456,2026-07-15,Edema assessment,SN
+9000123,7000456,2026-07-18,Cardiopulmonary assessment,SN
+9000123,7000456,2026-07-18,Edema assessment,SN
+9000123,7000456,2026-07-20,Cardiopulmonary assessment,SN
+9000123,7000456,2026-07-20,Edema assessment,SN
+9000123,7000456,2026-07-25,Cardiopulmonary assessment,SN
+9000123,7000456,2026-07-25,Edema assessment,SN
+9000123,7000456,2026-08-01,Cardiopulmonary assessment,SN
+9000123,7000456,2026-08-01,Edema assessment,SN
+9000123,7000456,2026-07-11,Fall-risk assessment (MAHC-10),SN
+9000123,7000456,2026-07-11,Pain assessment,SN
+9000123,7000456,2026-07-11,Depression screen (PHQ-2),SN
+9000123,7000456,2026-07-11,Medication review,SN
+9000123,7000456,2026-07-25,Medication review,SN
+9000123,7000456,2026-07-12,Gait and balance assessment,PT
+9000123,7000456,2026-07-26,Gait and balance assessment,PT
+9000123,7000456,2026-08-08,Gait and balance assessment,PT
+9000345,7000588,2026-07-02,Pain assessment,PT
+9000345,7000588,2026-07-09,Pain assessment,PT
+9000345,7000588,2026-07-16,Pain assessment,PT
+9000345,7000588,2026-07-23,Pain assessment,PT
+9000345,7000588,2026-07-30,Pain assessment,PT
+9000345,7000588,2026-08-06,Pain assessment,PT
+9000345,7000588,2026-07-02,Knee range of motion,PT
+9000345,7000588,2026-07-16,Knee range of motion,PT
+9000345,7000588,2026-07-30,Knee range of motion,PT
+9000345,7000588,2026-08-13,Knee range of motion,PT

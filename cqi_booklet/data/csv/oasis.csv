@@ -1,0 +1,18 @@
+patient_id,episode_id,assessment_id,assess_dt,timepoint,item,section,description,answer
+9000123,7000456,OA1,2026-07-11,01 - Start of care,M1033,Risk for hospitalization,Risk for hospitalization,1 - History of falls; 3 - 2+ hospitalizations in 6 months; 5 - Currently taking 5+ medications
+9000123,7000456,OA1,2026-07-11,01 - Start of care,M1400,Respiratory status,When is the patient dyspneic,2 - With moderate exertion
+9000123,7000456,OA1,2026-07-11,01 - Start of care,M1850,ADL / IADL,Transferring,1 - Transfers with minimal human assistance or device
+9000123,7000456,OA1,2026-07-11,01 - Start of care,M1860,ADL / IADL,Ambulation / locomotion,2 - Requires use of a two-handed device (walker)
+9000123,7000456,OA1,2026-07-11,01 - Start of care,M2020,Medications,Management of oral medications,2 - Able if another person prepares
+9000123,7000456,OA1,2026-07-11,01 - Start of care,M1242,Pain,Frequency of pain interfering with activity,1 - Less often than daily
+9000123,7000456,OA1,2026-07-11,01 - Start of care,M1700,Neuro / cognitive,Cognitive functioning,1 - Requires prompting under stressful conditions
+9000123,7000456,OA1,2026-07-11,01 - Start of care,M1100,Living arrangements,Patient living situation,Lives alone; occasional assistance
+9000123,7000456,OA1,2026-07-11,01 - Start of care,M2102,Care management,Supervision and safety,2 - Non-agency caregiver(s) need training / supportive services
+9000123,7000456,OA1,2026-07-11,01 - Start of care,M1311,Integumentary,Number of stage 2 pressure ulcers,1
+9000123,7000456,OA1,2026-07-11,01 - Start of care,M1200,Sensory,Vision,1 - Partially impaired
+9000345,7000588,OA3,2026-07-02,01 - Start of care,M1860,ADL / IADL,Ambulation / locomotion,2 - Requires use of a two-handed device (walker)
+9000345,7000588,OA3,2026-07-02,01 - Start of care,M1242,Pain,Frequency of pain interfering with activity,3 - Daily but not constantly
+9000345,7000588,OA3,2026-07-02,01 - Start of care,M1850,ADL / IADL,Transferring,1 - Transfers with minimal human assistance or device
+9000345,7000588,OA3R,2026-07-31,05 - Other follow-up,M1860,ADL / IADL,Ambulation / locomotion,1 - With a one-handed device (cane)
+9000345,7000588,OA3R,2026-07-31,05 - Other follow-up,M1242,Pain,Frequency of pain interfering with activity,1 - Less often than daily
+9000345,7000588,OA3R,2026-07-31,05 - Other follow-up,M1850,ADL / IADL,Transferring,0 - Able to independently transfer

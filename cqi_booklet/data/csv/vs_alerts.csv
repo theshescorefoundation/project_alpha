@@ -1,0 +1,4 @@
+patient_id,episode_id,alert_dt,alert_text,physician_notified
+9000123,7000456,2026-08-08,Weight above parameter (+5.4 lb from baseline),N
+9000123,7000456,2026-08-08,Pulse 102 above parameter (100),Y
+9000231,7000512,2026-08-08,SpO2 87% on 2L below parameter (88%),N

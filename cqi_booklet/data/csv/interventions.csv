@@ -1,0 +1,25 @@
+patient_id,episode_id,intervention_dt,intervention,discipline,goal
+9000123,7000456,2026-07-11,HF teaching,SN,Verbalize 3 signs of HF exacerbation within 2 weeks
+9000123,7000456,2026-07-13,HF teaching,SN,Verbalize 3 signs of HF exacerbation within 2 weeks
+9000123,7000456,2026-07-15,HF teaching,SN,Verbalize 3 signs of HF exacerbation within 2 weeks
+9000123,7000456,2026-07-18,HF teaching,SN,Verbalize 3 signs of HF exacerbation within 2 weeks
+9000123,7000456,2026-07-20,HF teaching,SN,Verbalize 3 signs of HF exacerbation within 2 weeks
+9000123,7000456,2026-07-11,Daily-weight teaching,SN,Weigh daily and keep a log
+9000123,7000456,2026-07-18,Daily-weight teaching,SN,Weigh daily and keep a log
+9000123,7000456,2026-07-25,Daily-weight teaching,SN,Weigh daily and keep a log
+9000123,7000456,2026-07-11,Medication teaching,SN,
+9000123,7000456,2026-07-20,Medication teaching,SN,
+9000123,7000456,2026-08-01,Medication teaching,SN,
+9000123,7000456,2026-07-25,Anticoagulant bleeding-precaution teaching,SN,Verbalize anticoagulant bleeding precautions within 3 weeks
+9000123,7000456,2026-07-12,Gait and transfer training,PT,Safe transfers with walker within 4 weeks
+9000123,7000456,2026-07-19,Gait and transfer training,PT,Safe transfers with walker within 4 weeks
+9000123,7000456,2026-07-21,Gait and transfer training,PT,Safe transfers with walker within 4 weeks
+9000123,7000456,2026-07-26,Gait and transfer training,PT,Safe transfers with walker within 4 weeks
+9000123,7000456,2026-07-28,Gait and transfer training,PT,Safe transfers with walker within 4 weeks
+9000123,7000456,2026-08-03,Gait and transfer training,PT,Safe transfers with walker within 4 weeks
+9000345,7000588,2026-07-04,Gait training with cane,PT,Ambulate 300 ft with cane within 6 weeks
+9000345,7000588,2026-07-11,Gait training with cane,PT,Ambulate 300 ft with cane within 6 weeks
+9000345,7000588,2026-07-18,Gait training with cane,PT,Ambulate 300 ft with cane within 6 weeks
+9000345,7000588,2026-07-25,Gait training with cane,PT,Ambulate 300 ft with cane within 6 weeks
+9000345,7000588,2026-08-01,Gait training with cane,PT,Ambulate 300 ft with cane within 6 weeks
+9000345,7000588,2026-08-08,Gait training with cane,PT,Ambulate 300 ft with cane within 6 weeks

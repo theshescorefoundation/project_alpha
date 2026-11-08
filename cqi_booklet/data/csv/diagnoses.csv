@@ -1,0 +1,11 @@
+patient_id,episode_id,code,description,category,clinical_group,diag_or_proc,onset_exacer,onset_exacer_dt,is_primary
+9000123,7000456,I50.9,"Heart failure, unspecified",CIRCULATORY SYSTEM,MMTA_CARDIAC,D,EXACERBATION,2026-07-04,Y
+9000123,7000456,I48.91,"Atrial fibrillation, unspecified",CIRCULATORY SYSTEM,MMTA_CARDIAC,D,ONSET,2025-06-05,N
+9000123,7000456,E11.9,Type 2 diabetes without complications,ENDOCRINE,MMTA_ENDO,D,,,N
+9000123,7000456,N18.30,"Chronic kidney disease, stage 3 unspecified",GENITOURINARY,MMTA_OTHER,D,,,N
+9000123,7000456,L89.152,"Pressure ulcer of sacral region, stage 2",SKIN,WOUND,D,ONSET,2026-07-07,N
+9000123,7000456,Z79.01,Long term use of anticoagulants,FACTORS INFLUENCING HEALTH,,D,,,N
+9000231,7000512,J44.1,COPD with acute exacerbation,RESPIRATORY SYSTEM,MMTA_RESPIRATORY,D,EXACERBATION,2026-07-25,Y
+9000231,7000512,Z99.81,Dependence on supplemental oxygen,FACTORS INFLUENCING HEALTH,,D,,,N
+9000345,7000588,Z96.651,Presence of right artificial knee joint,FACTORS INFLUENCING HEALTH,MS_REHAB,D,ONSET,2026-06-28,Y
+9000345,7000588,0SRC0J9,Replacement of right knee joint,PROCEDURE,MS_REHAB,P,,2026-06-28,N

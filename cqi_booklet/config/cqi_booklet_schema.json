@@ -1,0 +1,1778 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "type": "object",
+ "required": [
+  "schema_version",
+  "meta",
+  "patient",
+  "risk",
+  "summary",
+  "care_delivery",
+  "vitals",
+  "goals",
+  "events"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "urgency": {
+   "type": "string",
+   "enum": [
+    "Within 24 hrs",
+    "This week",
+    "Next SN visit",
+    "Next visit",
+    "Routine"
+   ]
+  },
+  "goal_status": {
+   "type": "string",
+   "enum": [
+    "Achieved",
+    "In progress",
+    "Delayed",
+    "Missed",
+    "Not started",
+    "Unknown"
+   ]
+  },
+  "discipline": {
+   "type": "string",
+   "enum": [
+    "SN",
+    "PT",
+    "OT",
+    "ST",
+    "HHA",
+    "MSW"
+   ]
+  },
+  "nn": {
+   "type": [
+    "number",
+    "null"
+   ]
+  }
+ },
+ "properties": {
+  "schema_version": {
+   "enum": [
+    "1.0",
+    "1.1",
+    "1.2",
+    "1.3",
+    "1.4",
+    "1.5",
+    "1.6",
+    "1.7",
+    "1.8"
+   ]
+  },
+  "meta": {
+   "type": "object",
+   "required": [
+    "as_of_date",
+    "model_version",
+    "generated_ts",
+    "run_id",
+    "sample"
+   ],
+   "properties": {
+    "sample": {
+     "type": "boolean"
+    },
+    "judge_status": {
+     "enum": [
+      "passed",
+      "adjudicated",
+      "failed",
+      "not_run",
+      null
+     ]
+    },
+    "llm_model": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "cohort_label": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "examples": [
+      "High-Risk & Rising-Risk Patients"
+     ]
+    },
+    "conference_label": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "prepared_by": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "prepared_for": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "produced_by": {
+     "type": [
+      "string",
+      "null"
+     ]
+    }
+   }
+  },
+  "patient": {
+   "type": "object",
+   "required": [
+    "patient_id",
+    "episode_id",
+    "episode_status",
+    "episode_day",
+    "episode_length"
+   ],
+   "properties": {
+    "patient_id": {
+     "type": "string"
+    },
+    "episode_id": {
+     "type": "string"
+    },
+    "branch_name": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "episode_status": {
+     "enum": [
+      "CURRENT",
+      "RECERTIFIED",
+      "ON-HOLD",
+      "DISCHARGED"
+     ]
+    },
+    "admit_type": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "episode_day": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "episode_length": {
+     "type": "integer"
+    },
+    "clin_group": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "profile": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "label",
+       "value"
+      ],
+      "properties": {
+       "label": {
+        "type": "string"
+       },
+       "value": {
+        "type": [
+         "string",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "indicators": {
+     "type": "object",
+     "description": "Dashboard indicators",
+     "properties": {
+      "wound": {
+       "type": [
+        "boolean",
+        "null"
+       ]
+      },
+      "inpatient": {
+       "type": [
+        "boolean",
+        "null"
+       ]
+      },
+      "death": {
+       "type": [
+        "boolean",
+        "null"
+       ]
+      },
+      "transfer": {
+       "type": [
+        "boolean",
+        "null"
+       ]
+      }
+     }
+    },
+    "episode_end": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "format": "date"
+    },
+    "days_to_episode_end": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "description": "episode_end - as_of_date, in days"
+    },
+    "discharge_window": {
+     "type": "object",
+     "description": "Nearing discharge decision: active episode within window_days of episode end",
+     "required": [
+      "flag"
+     ],
+     "properties": {
+      "flag": {
+       "type": "boolean"
+      },
+      "days_remaining": {
+       "type": [
+        "integer",
+        "null"
+       ]
+      },
+      "window_days": {
+       "type": "integer",
+       "default": 14
+      },
+      "label": {
+       "type": [
+        "string",
+        "null"
+       ]
+      }
+     }
+    },
+    "clinical_profile": {
+     "type": "object",
+     "description": "485 / OASIS clinical profile (dashboard Patient Profile page)",
+     "additionalProperties": false,
+     "properties": {
+      "comorbidity_adjustment": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "functional_impairment": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "functional_limitations": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "activities_permitted": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "allergies": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "mental_status": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "nutritional_requirements": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "prognosis": {
+       "type": [
+        "string",
+        "null"
+       ]
+      },
+      "rehab_potential": {
+       "type": [
+        "string",
+        "null"
+       ]
+      }
+     }
+    }
+   }
+  },
+  "risk": {
+   "type": "object",
+   "required": [
+    "outcome_risk_level",
+    "score"
+   ],
+   "properties": {
+    "outcome_risk_level": {
+     "enum": [
+      "very_high",
+      "high",
+      "moderate",
+      "low"
+     ]
+    },
+    "score": {
+     "type": "number"
+    },
+    "percentile": {
+     "$ref": "#/$defs/nn"
+    },
+    "score_prior": {
+     "$ref": "#/$defs/nn"
+    },
+    "risk_raised_by_care_gaps": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    },
+    "delay_clinical_impact": {
+     "enum": [
+      "low",
+      "moderate",
+      "high",
+      "not applicable",
+      null
+     ]
+    },
+    "outcomes_at_risk": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "drivers": {
+     "type": "array",
+     "maxItems": 10,
+     "items": {
+      "type": "object",
+      "required": [
+       "label",
+       "contribution"
+      ],
+      "properties": {
+       "feature": {
+        "type": "string"
+       },
+       "label": {
+        "type": "string"
+       },
+       "contribution": {
+        "type": "number"
+       }
+      }
+     }
+    },
+    "rationale": {
+     "type": [
+      "string",
+      "null"
+     ]
+    }
+   }
+  },
+  "summary": {
+   "type": "object",
+   "properties": {
+    "headline": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 220
+    },
+    "tiles": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "key",
+       "status",
+       "points"
+      ],
+      "properties": {
+       "key": {
+        "enum": [
+         "care",
+         "risk",
+         "vitals",
+         "goals"
+        ]
+       },
+       "status": {
+        "enum": [
+         "Act now",
+         "Monitor",
+         "On track"
+        ]
+       },
+       "points": {
+        "type": "array",
+        "maxItems": 3,
+        "items": {
+         "type": "string",
+         "maxLength": 70
+        }
+       }
+      }
+     }
+    },
+    "actions": {
+     "type": "array",
+     "maxItems": 5,
+     "items": {
+      "type": "object",
+      "required": [
+       "action",
+       "owner",
+       "when"
+      ],
+      "properties": {
+       "action": {
+        "type": "string",
+        "maxLength": 120
+       },
+       "when": {
+        "$ref": "#/$defs/urgency"
+       },
+       "evidence_section": {
+        "enum": [
+         "A",
+         "B",
+         "C",
+         "D",
+         "E",
+         "F",
+         "G",
+         "DC",
+         "M"
+        ]
+       }
+      }
+     }
+    }
+   }
+  },
+  "care_delivery": {
+   "type": "object",
+   "required": [
+    "current_week",
+    "disciplines"
+   ],
+   "properties": {
+    "current_week": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "disciplines": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "discipline",
+       "weeks"
+      ],
+      "properties": {
+       "discipline": {
+        "$ref": "#/$defs/discipline"
+       },
+       "weeks": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "required": [
+          "week",
+          "ordered"
+         ],
+         "properties": {
+          "week": {
+           "type": "integer"
+          },
+          "ordered": {
+           "type": "integer"
+          },
+          "delivered": {
+           "type": [
+            "integer",
+            "null"
+           ]
+          },
+          "scheduled": {
+           "type": "integer"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "frequency_status": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "schedule_status": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "compliance_window_missed": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    },
+    "acuity_level": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "first_visit_day": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "summary": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "missed_log": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "episode_day",
+       "discipline",
+       "visit"
+      ],
+      "properties": {
+       "episode_day": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       },
+       "when_label": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "discipline": {
+        "type": "string"
+       },
+       "visit": {
+        "type": "string"
+       },
+       "reason": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "status": {
+        "type": "string"
+       }
+      }
+     }
+    }
+   }
+  },
+  "vitals": {
+   "type": "object",
+   "properties": {
+    "readings": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "episode_day"
+      ],
+      "properties": {
+       "episode_day": {
+        "type": "integer"
+       },
+       "weight": {
+        "$ref": "#/$defs/nn"
+       },
+       "sbp": {
+        "$ref": "#/$defs/nn"
+       },
+       "dbp": {
+        "$ref": "#/$defs/nn"
+       },
+       "pulse": {
+        "$ref": "#/$defs/nn"
+       },
+       "spo2": {
+        "$ref": "#/$defs/nn"
+       },
+       "resp": {
+        "$ref": "#/$defs/nn"
+       },
+       "temp": {
+        "$ref": "#/$defs/nn"
+       }
+      }
+     }
+    },
+    "limits": {
+     "type": "object"
+    },
+    "findings": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "measure",
+       "urgency"
+      ],
+      "properties": {
+       "first": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "latest": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "change": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "interpretation": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "urgency": {
+        "$ref": "#/$defs/urgency"
+       }
+      }
+     }
+    },
+    "adequacy": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "trajectory": {
+     "type": "object",
+     "additionalProperties": false,
+     "description": "Vitals action window. Null fields are composed from the rule-based findings.",
+     "properties": {
+      "class": {
+       "enum": [
+        "improving",
+        "stable",
+        "deteriorating",
+        "insufficient_data",
+        null
+       ]
+      },
+      "saw": {
+       "type": [
+        "string",
+        "null"
+       ],
+       "maxLength": 300
+      },
+      "flags": {
+       "type": [
+        "string",
+        "null"
+       ],
+       "maxLength": 300
+      },
+      "action_window": {
+       "type": [
+        "string",
+        "null"
+       ],
+       "maxLength": 100
+      }
+     }
+    }
+   }
+  },
+  "goals": {
+   "type": "object",
+   "properties": {
+    "patient_stated_goal": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "items": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "goal",
+       "status"
+      ],
+      "properties": {
+       "goal": {
+        "type": "string"
+       },
+       "discipline": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "status": {
+        "$ref": "#/$defs/goal_status"
+       },
+       "evidence": {
+        "type": [
+         "string",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "interventions": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "text"
+      ],
+      "properties": {
+       "discipline": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "text": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    "alignment": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "item",
+       "type"
+      ],
+      "properties": {
+       "item": {
+        "type": "string"
+       },
+       "type": {
+        "enum": [
+         "Medication",
+         "Supply",
+         "DME"
+        ]
+       },
+       "supports_goal": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "check": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "flag": {
+        "type": "boolean"
+       }
+      }
+     }
+    }
+   }
+  },
+  "events": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "episode_day",
+     "type",
+     "detail"
+    ],
+    "properties": {
+     "episode_day": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "type": {
+      "type": "string"
+     },
+     "detail": {
+      "type": "string"
+     },
+     "source": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "flag": {
+      "type": "boolean"
+     }
+    }
+   }
+  },
+  "provenance": {
+   "type": "object"
+  },
+  "narratives": {
+   "type": "object",
+   "description": "CQI LLM summaries, printed unedited on the summaries page. Null = not generated.",
+   "additionalProperties": false,
+   "properties": {
+    "patient_goal": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 600,
+     "description": "Care-plan patient goal (dashboard 'Patient Goal')"
+    },
+    "profile_risk": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 2500,
+     "description": "Patient Profile & Risk Summary"
+    },
+    "vitals_trajectory": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 1500
+    },
+    "care_delivery": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 1500,
+     "description": "Care delivery + schedule summary"
+    },
+    "missed_care": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 1500
+    },
+    "delay_impact": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 800,
+     "description": "Clinical Delay Impact Explanation"
+    },
+    "data_gaps": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 4000,
+     "description": "Data Gaps Found: missing, conflicting or unexplained data the LLM noticed. Items separated by '|'."
+    }
+   }
+  },
+  "kpis": {
+   "type": "object",
+   "description": "Patient-level counts as of the run date",
+   "properties": {
+    "visits_completed": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "minimum": 0
+    },
+    "scheduled_visits": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "minimum": 0
+    },
+    "missed_care": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "minimum": 0
+    },
+    "ip_events": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "minimum": 0
+    },
+    "vitals_days": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "minimum": 0
+    }
+   }
+  },
+  "care_review": {
+   "type": "object",
+   "description": "What care was delivered: assessments, interventions, adverse events, visit themes",
+   "additionalProperties": false,
+   "properties": {
+    "assessments_summary": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 1500
+    },
+    "assessments": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "assessment",
+       "count"
+      ],
+      "properties": {
+       "assessment": {
+        "type": "string"
+       },
+       "discipline": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "count": {
+        "type": "integer"
+       },
+       "last_day": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "interventions_summary": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 1500
+    },
+    "interventions": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "intervention",
+       "count"
+      ],
+      "properties": {
+       "intervention": {
+        "type": "string"
+       },
+       "discipline": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "goal": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "count": {
+        "type": "integer"
+       },
+       "last_day": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "adverse_events_summary": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 1000
+    },
+    "adverse_events": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "episode_day": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       },
+       "type": {
+        "type": "string"
+       },
+       "severity": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "detail": {
+        "type": [
+         "string",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "visit_themes": {
+     "type": "array",
+     "maxItems": 10,
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "gap_analysis": {
+   "type": "object",
+   "description": "What should be added to meet patient goals",
+   "additionalProperties": false,
+   "properties": {
+    "missing_interventions": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "goal",
+       "intervention"
+      ],
+      "properties": {
+       "goal": {
+        "type": "string"
+       },
+       "intervention": {
+        "type": "string"
+       },
+       "discipline": {
+        "type": [
+         "string",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "missing_assessments": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "item"
+      ],
+      "properties": {
+       "item": {
+        "type": "string"
+       },
+       "type": {
+        "enum": [
+         "Assessment",
+         "Vitals",
+         null
+        ]
+       },
+       "reason": {
+        "type": [
+         "string",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "visit_goals": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "visit_goal"
+      ],
+      "properties": {
+       "discipline": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "visit_goal": {
+        "type": "string"
+       },
+       "supports_goal": {
+        "type": [
+         "string",
+         "null"
+        ]
+       }
+      }
+     }
+    }
+   }
+  },
+  "at_a_glance": {
+   "type": "object",
+   "additionalProperties": false,
+   "description": "Short customer-facing summary: goal -> risk -> care delivery -> trajectory -> CQI flags. Null = composed from facts.",
+   "properties": {
+    "found": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 200
+    },
+    "risk": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 300
+    },
+    "care_delivery": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 300
+    },
+    "trajectory": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 300
+    },
+    "flags": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 350
+    }
+   }
+  },
+  "clinical": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "wound_summary": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 800
+    },
+    "wounds": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "wound_id"
+      ],
+      "properties": {
+       "wound_id": {
+        "type": "string"
+       },
+       "category": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "wound_class": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "extended_type": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "location": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "description": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "stage": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "first_size": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "latest_size": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "area_change_pct": {
+        "type": [
+         "number",
+         "null"
+        ]
+       },
+       "healing_status": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "assessments": {
+        "type": "integer"
+       },
+       "first_day": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       },
+       "last_day": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "diagnosis_summary": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 800
+    },
+    "diagnoses": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "code"
+      ],
+      "properties": {
+       "code": {
+        "type": "string"
+       },
+       "description": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "category": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "clinical_group": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "diag_or_proc": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "onset_exacer": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "onset_exacer_day": {
+        "type": [
+         "integer",
+         "null"
+        ]
+       },
+       "is_primary": {
+        "type": [
+         "boolean",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "oasis_summary": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 800
+    },
+    "oasis": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "item"
+      ],
+      "properties": {
+       "item": {
+        "type": "string"
+       },
+       "section": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "description": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "first": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "latest": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "first_timepoint": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "latest_timepoint": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "changed": {
+        "type": "boolean"
+       },
+       "key_item": {
+        "type": "boolean"
+       }
+      }
+     }
+    }
+   }
+  },
+  "care_network": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "has_pcp": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    },
+    "pcp_name": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "pcp_last_visit_days": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "ma_eligible": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    },
+    "cwpco_enrolled": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    },
+    "cwrx_enrolled": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    },
+    "nearest_cwpco_clinic": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "nearest_cwpco_miles": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "cwpco_clinics_10mi": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "cwpco_clinics_20mi": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "active_med_count": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "refer_cwpco": {
+     "type": "object",
+     "required": [
+      "indicator"
+     ],
+     "properties": {
+      "indicator": {
+       "enum": [
+        "Refer",
+        "Consider",
+        "Already enrolled",
+        "Not indicated",
+        "Check eligibility"
+       ]
+      },
+      "reason": {
+       "type": [
+        "string",
+        "null"
+       ]
+      }
+     }
+    },
+    "refer_cwrx": {
+     "type": "object",
+     "required": [
+      "indicator"
+     ],
+     "properties": {
+      "indicator": {
+       "enum": [
+        "Refer",
+        "Consider",
+        "Already enrolled",
+        "Not indicated",
+        "Check eligibility"
+       ]
+      },
+      "reason": {
+       "type": [
+        "string",
+        "null"
+       ]
+      }
+     }
+    }
+   }
+  },
+  "discharge_recommendation": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "Only for episodes nearing discharge. LLM may supply recommendation + rationale; rules fill the rest.",
+   "properties": {
+    "recommendation": {
+     "enum": [
+      "Discharge",
+      "Discharge with referrals",
+      "Recertify",
+      "Clinical review",
+      null
+     ]
+    },
+    "confidence": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "rationale": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 600
+    },
+    "supports_recert": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "supports_discharge": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "data_caveats": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "next_steps": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "source": {
+     "enum": [
+      "llm",
+      "rules",
+      null
+     ]
+    },
+    "days_remaining": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    }
+   }
+  },
+  "medications": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "summary": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "maxLength": 600
+    },
+    "active_count": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "high_risk": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "name"
+      ],
+      "properties": {
+       "name": {
+        "type": "string"
+       },
+       "drug_class": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "reason": {
+        "type": [
+         "string",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "checks": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "episode_day"
+      ],
+      "properties": {
+       "episode_day": {
+        "type": "integer"
+       },
+       "discipline": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "understanding": {
+        "type": [
+         "boolean",
+         "null"
+        ]
+       },
+       "teaching": {
+        "type": [
+         "boolean",
+         "null"
+        ]
+       },
+       "adherent": {
+        "type": [
+         "boolean",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "visits_with_check": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "visits_total": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "last_check_day": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    },
+    "flag": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "adherence_concerns": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    }
+   }
+  }
+ },
+ "$id": "cqi_booklet_payload_v1_8",
+ "title": "CQI Patient Conference Booklet payload",
+ "description": "One JSON document per patient-episode per CQI run. Facts are computed from Lighthouse tables; narratives are CQI LLM outputs printed verbatim on the summaries page."
+}

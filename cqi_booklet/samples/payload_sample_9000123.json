@@ -1,0 +1,1444 @@
+{
+ "schema_version": "1.8",
+ "meta": {
+  "as_of_date": "2026-08-15",
+  "model_version": "cwhh-tif-60day-v1",
+  "generated_ts": "2026-11-06T23:43:43Z",
+  "run_id": "cqi_20260815_234342",
+  "conference_label": "Week of 08/17/2026",
+  "cohort_label": "High-Risk & Rising-Risk Patients",
+  "sample": true,
+  "llm_model": "<llm-endpoint>",
+  "judge_status": "adjudicated"
+ },
+ "patient": {
+  "patient_id": "9000123",
+  "episode_id": "7000456",
+  "branch_name": "BRANCH 0412 - CENTERWELL HOME HEALTH",
+  "branch_state": "NC",
+  "episode_status": "CURRENT",
+  "admit_type": "READMISSION",
+  "episode_start": "2026-07-10",
+  "episode_day": 36,
+  "episode_length": 60,
+  "episode_end": "2026-09-07",
+  "days_to_episode_end": 23,
+  "discharge_window": {
+   "flag": false,
+   "days_remaining": 23,
+   "window_days": 14,
+   "label": null
+  },
+  "clinical_profile": {
+   "comorbidity_adjustment": "High",
+   "functional_impairment": "Medium",
+   "functional_limitations": "AMBULATION, ENDURANCE, DYSPNEA WITH MINIMAL EXERTION, DECREASED VISION",
+   "activities_permitted": "UP AS TOLERATED, WALKER, TRANSFER BED/CHAIR",
+   "allergies": "PENICILLIN, SULFA",
+   "mental_status": "ORIENTED, FORGETFUL",
+   "nutritional_requirements": "2 GM SODIUM, 1500 ML FLUID RESTRICTION",
+   "prognosis": "FAIR",
+   "rehab_potential": "FAIR"
+  },
+  "clin_group": "MMTA_CARDIAC",
+  "profile": [
+   {
+    "label": "Age band / sex",
+    "value": "80-84 / F"
+   },
+   {
+    "label": "Clinical group",
+    "value": "MMTA_CARDIAC"
+   },
+   {
+    "label": "Primary diagnosis",
+    "value": "Heart failure, unspecified (I50.9)"
+   },
+   {
+    "label": "Comorbidities",
+    "value": "Type 2 diabetes; CKD stage 3; atrial fibrillation on anticoagulant; impaired vision"
+   },
+   {
+    "label": "Living situation",
+    "value": "Lives alone; daughter visits weekly"
+   },
+   {
+    "label": "Admission type",
+    "value": "Readmission"
+   },
+   {
+    "label": "Acuity level / first visit",
+    "value": "Level 2; first visit DAY+1"
+   }
+  ],
+  "indicators": {
+   "wound": false,
+   "inpatient": true,
+   "death": false,
+   "transfer": false
+  }
+ },
+ "risk": {
+  "outcome_risk_level": "high",
+  "score": 0.38,
+  "percentile": 66.7,
+  "score_prior": 0.31,
+  "risk_raised_by_care_gaps": true,
+  "delay_clinical_impact": "moderate",
+  "outcomes_at_risk": [
+   "hospitalization",
+   "fall",
+   "medication_adverse_event"
+  ],
+  "drivers": [
+   {
+    "feature": "ip_stay_14d_pre_soc",
+    "label": "Inpatient stay within 14 days before SOC",
+    "contribution": 0.092
+   },
+   {
+    "feature": "m1400_dyspnea",
+    "label": "Dyspnea with moderate exertion (OASIS M1400)",
+    "contribution": 0.071
+   },
+   {
+    "feature": "dx_hf_primary",
+    "label": "Heart failure primary diagnosis",
+    "contribution": 0.058
+   },
+   {
+    "feature": "med_count_10p_anticoag",
+    "label": "10+ medications incl. anticoagulant",
+    "contribution": 0.044
+   },
+   {
+    "feature": "fall_3m",
+    "label": "Fall in the past 3 months",
+    "contribution": 0.037
+   },
+   {
+    "feature": "lives_alone",
+    "label": "Lives alone, limited caregiver support",
+    "contribution": 0.029
+   },
+   {
+    "feature": "m1200_vision",
+    "label": "Impaired vision (OASIS M1200)",
+    "contribution": 0.018
+   }
+  ],
+  "rationale": "Baseline risk is high: recent HF hospitalization, exertional dyspnea, anticoagulant use and a recent fall in a patient who lives alone with impaired vision. Risk has risen because SN and PT visits fell behind in weeks 3-5, the OT evaluation was not completed, and no future visits are on the schedule while weight is trending up."
+ },
+ "summary": {
+  "headline": "High and rising hospitalization risk, weight up 6.3 lb in 3 weeks, and no future visits scheduled for the 7 ordered visits that remain.",
+  "tiles": [
+   {
+    "key": "care",
+    "status": "Act now",
+    "points": [
+     "7 ordered visits remain (4 SN, 3 PT); 0 scheduled",
+     "2 SN and 1 PT visits missed in weeks 3-5",
+     "OT evaluation and MSW consult not completed"
+    ]
+   },
+   {
+    "key": "risk",
+    "status": "Act now",
+    "points": [
+     "60-day risk 0.38; rising +0.07 vs. prior week",
+     "Top drivers: recent inpatient stay, dyspnea, HF",
+     "Care gaps flagged as raising risk"
+    ]
+   },
+   {
+    "key": "vitals",
+    "status": "Act now",
+    "points": [
+     "Weight +6.3 lb over 3 weeks (168.0 to 174.3)",
+     "SpO2 drifting down 95% to 91%; pulse up to 102",
+     "No vitals since day 33; no SN visit scheduled"
+    ]
+   },
+   {
+    "key": "goals",
+    "status": "Monitor",
+    "points": [
+     "6 care-plan goals: 1 achieved, 2 in progress",
+     "2 delayed (daily weights, safe transfers)",
+     "1 missed (MSW consult within 3 weeks)"
+    ]
+   }
+  ],
+  "actions": [
+   {
+    "action": "Call patient and notify MD of weight gain; review diuretic order and HF zone plan",
+    "owner": "SN / CM",
+    "when": "Within 24 hrs",
+    "evidence_section": "C"
+   },
+   {
+    "action": "Schedule all remaining ordered visits (SN wks 6-9, PT wks 6-8)",
+    "owner": "Scheduling",
+    "when": "Within 24 hrs",
+    "evidence_section": "B"
+   },
+   {
+    "action": "Obtain order and complete OT home-safety evaluation; MSW consult for living-alone support",
+    "owner": "CM / OT / MSW",
+    "when": "This week",
+    "evidence_section": "D"
+   },
+   {
+    "action": "Anticoagulant-focused med reconciliation with large-print list and teach-back",
+    "owner": "SN",
+    "when": "Next SN visit",
+    "evidence_section": "D"
+   }
+  ]
+ },
+ "care_delivery": {
+  "weeks": 9,
+  "current_week": 6,
+  "disciplines": [
+   {
+    "discipline": "SN",
+    "weeks": [
+     {
+      "week": 1,
+      "ordered": 3,
+      "delivered": 3,
+      "scheduled": 0
+     },
+     {
+      "week": 2,
+      "ordered": 2,
+      "delivered": 2,
+      "scheduled": 0
+     },
+     {
+      "week": 3,
+      "ordered": 2,
+      "delivered": 1,
+      "scheduled": 0
+     },
+     {
+      "week": 4,
+      "ordered": 1,
+      "delivered": 1,
+      "scheduled": 0
+     },
+     {
+      "week": 5,
+      "ordered": 1,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 6,
+      "ordered": 1,
+      "delivered": null,
+      "scheduled": 0
+     },
+     {
+      "week": 7,
+      "ordered": 1,
+      "delivered": null,
+      "scheduled": 0
+     },
+     {
+      "week": 8,
+      "ordered": 1,
+      "delivered": null,
+      "scheduled": 0
+     },
+     {
+      "week": 9,
+      "ordered": 1,
+      "delivered": null,
+      "scheduled": 0
+     }
+    ]
+   },
+   {
+    "discipline": "PT",
+    "weeks": [
+     {
+      "week": 1,
+      "ordered": 1,
+      "delivered": 1,
+      "scheduled": 0
+     },
+     {
+      "week": 2,
+      "ordered": 2,
+      "delivered": 2,
+      "scheduled": 0
+     },
+     {
+      "week": 3,
+      "ordered": 2,
+      "delivered": 2,
+      "scheduled": 0
+     },
+     {
+      "week": 4,
+      "ordered": 2,
+      "delivered": 1,
+      "scheduled": 0
+     },
+     {
+      "week": 5,
+      "ordered": 2,
+      "delivered": 1,
+      "scheduled": 0
+     },
+     {
+      "week": 6,
+      "ordered": 1,
+      "delivered": null,
+      "scheduled": 0
+     },
+     {
+      "week": 7,
+      "ordered": 1,
+      "delivered": null,
+      "scheduled": 0
+     },
+     {
+      "week": 8,
+      "ordered": 1,
+      "delivered": null,
+      "scheduled": 0
+     },
+     {
+      "week": 9,
+      "ordered": 0,
+      "delivered": null,
+      "scheduled": 0
+     }
+    ]
+   },
+   {
+    "discipline": "OT",
+    "weeks": [
+     {
+      "week": 1,
+      "ordered": 0,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 2,
+      "ordered": 1,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 3,
+      "ordered": 0,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 4,
+      "ordered": 0,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 5,
+      "ordered": 0,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 6,
+      "ordered": 0,
+      "delivered": null,
+      "scheduled": 0
+     },
+     {
+      "week": 7,
+      "ordered": 0,
+      "delivered": null,
+      "scheduled": 0
+     },
+     {
+      "week": 8,
+      "ordered": 0,
+      "delivered": null,
+      "scheduled": 0
+     },
+     {
+      "week": 9,
+      "ordered": 0,
+      "delivered": null,
+      "scheduled": 0
+     }
+    ]
+   },
+   {
+    "discipline": "HHA",
+    "weeks": [
+     {
+      "week": 1,
+      "ordered": 0,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 2,
+      "ordered": 1,
+      "delivered": 1,
+      "scheduled": 0
+     },
+     {
+      "week": 3,
+      "ordered": 1,
+      "delivered": 1,
+      "scheduled": 0
+     },
+     {
+      "week": 4,
+      "ordered": 1,
+      "delivered": 1,
+      "scheduled": 0
+     },
+     {
+      "week": 5,
+      "ordered": 1,
+      "delivered": 1,
+      "scheduled": 0
+     },
+     {
+      "week": 6,
+      "ordered": 1,
+      "delivered": null,
+      "scheduled": 1
+     },
+     {
+      "week": 7,
+      "ordered": 1,
+      "delivered": null,
+      "scheduled": 1
+     },
+     {
+      "week": 8,
+      "ordered": 1,
+      "delivered": null,
+      "scheduled": 1
+     },
+     {
+      "week": 9,
+      "ordered": 1,
+      "delivered": null,
+      "scheduled": 1
+     }
+    ]
+   },
+   {
+    "discipline": "MSW",
+    "weeks": [
+     {
+      "week": 1,
+      "ordered": 0,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 2,
+      "ordered": 0,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 3,
+      "ordered": 1,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 4,
+      "ordered": 0,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 5,
+      "ordered": 0,
+      "delivered": 0,
+      "scheduled": 0
+     },
+     {
+      "week": 6,
+      "ordered": 0,
+      "delivered": null,
+      "scheduled": 0
+     },
+     {
+      "week": 7,
+      "ordered": 0,
+      "delivered": null,
+      "scheduled": 0
+     },
+     {
+      "week": 8,
+      "ordered": 0,
+      "delivered": null,
+      "scheduled": 0
+     },
+     {
+      "week": 9,
+      "ordered": 0,
+      "delivered": null,
+      "scheduled": 0
+     }
+    ]
+   }
+  ],
+  "frequency_status": "minor_shortfall",
+  "schedule_status": "no_future_schedule",
+  "compliance_window_missed": false,
+  "acuity_level": "2",
+  "first_visit_day": 1,
+  "summary": "Week 1 front-loading was met for SN and PT. SN fell short in weeks 3 and 5 and PT in weeks 4-5; neither shortfall was made up. The OT evaluation ordered for week 2 and the PRN MSW consult have no visit record. Schedule: Seven ordered visits remain in weeks 6-9 (4 SN, 3 PT) and none are scheduled; only HHA visits are on the calendar.",
+  "missed_log": [
+   {
+    "episode_day": 17,
+    "when_label": null,
+    "discipline": "SN",
+    "visit": "SN subsequent visit",
+    "reason": "Patient not home",
+    "status": "Missed"
+   },
+   {
+    "episode_day": 26,
+    "when_label": null,
+    "discipline": "PT",
+    "visit": "PT subsequent visit",
+    "reason": "Staff availability",
+    "status": "Missed"
+   },
+   {
+    "episode_day": 31,
+    "when_label": null,
+    "discipline": "SN",
+    "visit": "SN subsequent visit",
+    "reason": "Patient requested reschedule",
+    "status": "Missed"
+   }
+  ]
+ },
+ "vitals": {
+  "readings": [
+   {
+    "episode_day": 1,
+    "weight": 168.0,
+    "sbp": 132.0,
+    "dbp": 78.0,
+    "pulse": 82.0,
+    "spo2": 95.0,
+    "resp": null,
+    "temp": null
+   },
+   {
+    "episode_day": 3,
+    "weight": 167.6,
+    "sbp": 128.0,
+    "dbp": 76.0,
+    "pulse": 86.0,
+    "spo2": 96.0,
+    "resp": null,
+    "temp": null
+   },
+   {
+    "episode_day": 5,
+    "weight": 168.2,
+    "sbp": 136.0,
+    "dbp": 80.0,
+    "pulse": 79.0,
+    "spo2": 95.0,
+    "resp": null,
+    "temp": null
+   },
+   {
+    "episode_day": 8,
+    "weight": 168.8,
+    "sbp": 134.0,
+    "dbp": 78.0,
+    "pulse": 88.0,
+    "spo2": 94.0,
+    "resp": null,
+    "temp": null
+   },
+   {
+    "episode_day": 10,
+    "weight": 169.5,
+    "sbp": 138.0,
+    "dbp": 82.0,
+    "pulse": 92.0,
+    "spo2": 94.0,
+    "resp": null,
+    "temp": null
+   },
+   {
+    "episode_day": 15,
+    "weight": 170.4,
+    "sbp": 142.0,
+    "dbp": 84.0,
+    "pulse": 90.0,
+    "spo2": 93.0,
+    "resp": null,
+    "temp": null
+   },
+   {
+    "episode_day": 17,
+    "weight": 171.0,
+    "sbp": 140.0,
+    "dbp": 82.0,
+    "pulse": 96.0,
+    "spo2": 93.0,
+    "resp": null,
+    "temp": null
+   },
+   {
+    "episode_day": 22,
+    "weight": 172.6,
+    "sbp": 146.0,
+    "dbp": 86.0,
+    "pulse": 94.0,
+    "spo2": 92.0,
+    "resp": null,
+    "temp": null
+   },
+   {
+    "episode_day": 29,
+    "weight": 173.8,
+    "sbp": 150.0,
+    "dbp": 88.0,
+    "pulse": 102.0,
+    "spo2": 92.0,
+    "resp": null,
+    "temp": null
+   },
+   {
+    "episode_day": 33,
+    "weight": 174.3,
+    "sbp": 152.0,
+    "dbp": 86.0,
+    "pulse": 98.0,
+    "spo2": 91.0,
+    "resp": null,
+    "temp": null
+   }
+  ],
+  "limits": {
+   "sbp_high": 160.0,
+   "pulse_high": 100.0,
+   "pulse_low": 50.0,
+   "spo2_low": 90.0,
+   "weight_gain_lb": 5.0
+  },
+  "findings": [
+   {
+    "measure": "SpO2 (%)",
+    "first": "95",
+    "latest": "91",
+    "change": "-4 in 5 wks",
+    "urgency": "Within 24 hrs",
+    "interpretation": "Gradual decline, still above limit; consistent with weight trend"
+   },
+   {
+    "measure": "Weight (lb)",
+    "first": "168",
+    "latest": "174.3",
+    "change": "+6.3 in 5 wks",
+    "urgency": "Within 24 hrs",
+    "interpretation": "Steady gain with edema noted DAY+33; possible fluid retention"
+   },
+   {
+    "measure": "Systolic BP (mmHg)",
+    "first": "132",
+    "latest": "152",
+    "change": "+20 in 5 wks",
+    "urgency": "This week",
+    "interpretation": "Rising but below limit; recheck with HF review"
+   },
+   {
+    "measure": "Pulse (bpm)",
+    "first": "82",
+    "latest": "98",
+    "change": "+16 in 5 wks",
+    "urgency": "Routine",
+    "interpretation": "Crossed 100 on DAY+29; AFib - confirm apical rate and rhythm"
+   }
+  ],
+  "adequacy": "Ten vitals days in 33 days. No readings since DAY+33 and no SN visit scheduled. Weight alert on DAY+29 has no documented physician notification. CQI recommends a same-day phone check and MD notification.",
+  "trajectory": {
+   "class": "deteriorating",
+   "saw": "Weight up 6.3 lb over 3 weeks; SpO2 95% to 91%; pulse crossed 100 on DAY+29; no readings since DAY+33.",
+   "flags": "Possible fluid retention. Clinician review within 24 hours; no SN visit scheduled is inadequate monitoring.",
+   "action_window": "Clinician review within 24 hours"
+  }
+ },
+ "at_a_glance": {
+  "found": "Weight up 6.3 lb in 3 weeks, possible fluid retention; 7 ordered visits remain and none are scheduled.",
+  "risk": "Readmission after HF hospitalization; AFib on anticoagulant, recent fall, lives alone with impaired vision.",
+  "care_delivery": "Acuity window met. SN short in weeks 3 and 5, PT in weeks 4-5; OT evaluation and MSW consult not done.",
+  "trajectory": "Weight up 6.3 lb over 3 weeks with new ankle edema; SpO2 drifting 95% to 91%. No vitals since DAY+33.",
+  "flags": "Call the patient and notify MD of the weight gain today. Schedule all remaining SN and PT visits and escalate to the clinical manager."
+ },
+ "goals": {
+  "patient_stated_goal": "I want to stay at home and live as long as I can.",
+  "items": [
+   {
+    "goal": "MSW consult for social and community resources within 3 weeks",
+    "discipline": "MSW",
+    "status": "Missed",
+    "evidence": "No MSW visit record"
+   },
+   {
+    "goal": "Weigh daily and keep a log",
+    "discipline": "SN",
+    "status": "Delayed",
+    "evidence": "Log incomplete on 3 of 5 SN visits"
+   },
+   {
+    "goal": "Safe transfers with walker within 4 weeks",
+    "discipline": "PT",
+    "status": "Delayed",
+    "evidence": "PT shortfall weeks 4-5"
+   },
+   {
+    "goal": "Verbalize anticoagulant bleeding precautions within 3 weeks",
+    "discipline": "SN",
+    "status": "In progress",
+    "evidence": "Partially documented DAY+15"
+   },
+   {
+    "goal": "Home-safety evaluation completed",
+    "discipline": "OT",
+    "status": "In progress",
+    "evidence": "OT evaluation not yet delivered"
+   },
+   {
+    "goal": "Verbalize 3 signs of HF exacerbation within 2 weeks",
+    "discipline": "SN",
+    "status": "Achieved",
+    "evidence": "Teach-back documented DAY+10"
+   },
+   {
+    "goal": "Ambulate 150 ft with walker, supervision, within 4 weeks",
+    "discipline": "PT",
+    "status": "Achieved",
+    "evidence": "150 ft with walker DAY+24"
+   },
+   {
+    "goal": "Independent with lower-body dressing using adaptive equipment",
+    "discipline": "OT",
+    "status": "Not started",
+    "evidence": "OT evaluation not delivered"
+   }
+  ],
+  "interventions": [
+   {
+    "discipline": "SN",
+    "text": "Anticoagulant-focused medication reconciliation with a large-print list for impaired vision."
+   },
+   {
+    "discipline": "SN",
+    "text": "HF zone teaching with teach-back; reinforce daily weights and when to call."
+   },
+   {
+    "discipline": "CM",
+    "text": "Obtain or confirm orders for OT home-safety evaluation and MSW consult."
+   },
+   {
+    "discipline": "PT",
+    "text": "Resume gait and transfer training toward the walker goal."
+   }
+  ],
+  "alignment": [
+   {
+    "item": "Furosemide 40 mg daily",
+    "type": "Medication",
+    "supports_goal": "Daily weights / HF goal",
+    "check": "Order aligned; weight trend not escalated",
+    "flag": true
+   },
+   {
+    "item": "Apixaban 5 mg BID",
+    "type": "Medication",
+    "supports_goal": "Bleeding precautions",
+    "check": "Teaching in progress",
+    "flag": false
+   },
+   {
+    "item": "Digital scale",
+    "type": "Supply",
+    "supports_goal": "Daily weights",
+    "check": "Present, documented DAY+1",
+    "flag": false
+   },
+   {
+    "item": "Pulse oximeter",
+    "type": "Supply",
+    "supports_goal": "Dyspnea monitoring",
+    "check": "Not documented",
+    "flag": true
+   },
+   {
+    "item": "Front-wheeled walker",
+    "type": "DME",
+    "supports_goal": "Safe transfers",
+    "check": "Present",
+    "flag": false
+   }
+  ]
+ },
+ "narratives": {
+  "patient_goal": "PATIENT WILL VERBALIZE AND DEMONSTRATE DAILY WEIGHT MONITORING AND 3 SIGNS OF HEART FAILURE EXACERBATION AND WHEN TO CALL THE AGENCY WITHIN 2 WEEKS",
+  "profile_risk": "82-year-old woman readmitted after a heart failure hospitalization that ended 2 days before start of care, with atrial fibrillation on an anticoagulant, type 2 diabetes, CKD stage 3, impaired vision and a fall in the past 3 months. She lives alone; her daughter visits weekly. SN fell short in weeks 3 and 5 and PT in weeks 4-5, and no SN or PT visits are scheduled for the rest of the period. Risk Rationale: Baseline risk is high due to the recent HF hospitalization, exertional dyspnea, polypharmacy with an anticoagulant and fall history in a patient who lives alone. Care gaps - missed SN visits during a period of weight gain and zero future skilled visits - raise hospitalization risk by reducing clinical surveillance of fluid status and medication safety.",
+  "vitals_trajectory": "Ten vitals days in 33 days. No readings since DAY+33 and no SN visit scheduled. Weight alert on DAY+29 has no documented physician notification. CQI recommends a same-day phone check and MD notification.",
+  "care_delivery": "Week 1 front-loading was met for SN and PT. SN fell short in weeks 3 and 5 and PT in weeks 4-5; neither shortfall was made up. The OT evaluation ordered for week 2 and the PRN MSW consult have no visit record. Schedule: Seven ordered visits remain in weeks 6-9 (4 SN, 3 PT) and none are scheduled; only HHA visits are on the calendar.",
+  "missed_care": "Missed Care Impact: Two SN visits (DAY+17 patient not home; DAY+31 patient requested reschedule) and one PT visit (DAY+26 staff availability) were missed and not made up. The DAY+31 SN miss came two days after a weight alert with no documented physician notification, so a key chance to assess fluid status was lost. The OT evaluation and PRN MSW consult have no visit record. For a patient who lives alone with impaired vision, these gaps matter more than the visit count suggests.",
+  "delay_impact": "ACUITYSTATUS: Acuity level 2 requires the first visit within 48 hours; the first SN visit occurred on DAY+1, within the window. Delay impact is rated moderate because later SN gaps coincided with a rising weight trend rather than because of the start-of-care timing.",
+  "data_gaps": "OT evaluation ordered for week 2 has no visit, missed-visit record or cancellation.|Weight alert on DAY+29 has no physician-notification record and no follow-up note.|Pulse oximeter is listed as a needed supply but no delivery or in-home documentation was found.|Edema noted on DAY+33 has no measurement or comparison to baseline.|Living situation says the daughter visits weekly but no caregiver contact or availability is recorded.|Apixaban teaching is marked partial on DAY+15 with no later update."
+ },
+ "clinical": {
+  "wound_summary": "One stage 2 sacral pressure injury, area down 33% since SOC and assessed weekly. A skin tear on the left forearm from the DAY+19 near-fall has no follow-up measurement.",
+  "wounds": [
+   {
+    "wound_id": "W1",
+    "category": "PRESSURE ULCER",
+    "wound_class": "P",
+    "extended_type": null,
+    "location": "SACRAL, MID",
+    "description": "STAGE 2 PRESSURE ULCER - PARTIAL THICKNESS SKIN LOSS",
+    "stage": "Stage 2",
+    "first_size": "3x2x0.3 cm",
+    "latest_size": "2.5x1.6x0.2 cm",
+    "area_change_pct": -33.0,
+    "healing_status": "Improving",
+    "assessments": 4,
+    "first_day": 1,
+    "last_day": 22
+   },
+   {
+    "wound_id": "W2",
+    "category": "TRAUMA",
+    "wound_class": "T",
+    "extended_type": "SKIN TEAR",
+    "location": "FOREARM, LT",
+    "description": "SKIN TEAR FROM NEAR-FALL",
+    "stage": null,
+    "first_size": "2x0.5 cm",
+    "latest_size": "2x0.5 cm",
+    "area_change_pct": 0.0,
+    "healing_status": "Not reassessed",
+    "assessments": 1,
+    "first_day": 19,
+    "last_day": 19
+   }
+  ],
+  "diagnosis_summary": "Primary HF (I50.9) with exacerbation onset before SOC. Comorbid AFib on apixaban, type 2 diabetes and CKD stage 3. No procedure codes this episode.",
+  "diagnoses": [
+   {
+    "code": "I50.9",
+    "description": "Heart failure, unspecified",
+    "category": "CIRCULATORY SYSTEM",
+    "clinical_group": "MMTA_CARDIAC",
+    "diag_or_proc": "D",
+    "onset_exacer": "EXACERBATION",
+    "onset_exacer_day": -6,
+    "is_primary": true
+   },
+   {
+    "code": "I48.91",
+    "description": "Atrial fibrillation, unspecified",
+    "category": "CIRCULATORY SYSTEM",
+    "clinical_group": "MMTA_CARDIAC",
+    "diag_or_proc": "D",
+    "onset_exacer": "ONSET",
+    "onset_exacer_day": -400,
+    "is_primary": false
+   },
+   {
+    "code": "E11.9",
+    "description": "Type 2 diabetes without complications",
+    "category": "ENDOCRINE",
+    "clinical_group": "MMTA_ENDO",
+    "diag_or_proc": "D",
+    "onset_exacer": null,
+    "onset_exacer_day": null,
+    "is_primary": false
+   },
+   {
+    "code": "N18.30",
+    "description": "Chronic kidney disease, stage 3 unspecified",
+    "category": "GENITOURINARY",
+    "clinical_group": "MMTA_OTHER",
+    "diag_or_proc": "D",
+    "onset_exacer": null,
+    "onset_exacer_day": null,
+    "is_primary": false
+   },
+   {
+    "code": "L89.152",
+    "description": "Pressure ulcer of sacral region, stage 2",
+    "category": "SKIN",
+    "clinical_group": "WOUND",
+    "diag_or_proc": "D",
+    "onset_exacer": "ONSET",
+    "onset_exacer_day": -3,
+    "is_primary": false
+   },
+   {
+    "code": "Z79.01",
+    "description": "Long term use of anticoagulants",
+    "category": "FACTORS INFLUENCING HEALTH",
+    "clinical_group": null,
+    "diag_or_proc": "D",
+    "onset_exacer": null,
+    "onset_exacer_day": null,
+    "is_primary": false
+   }
+  ],
+  "oasis_summary": "SOC OASIS shows dyspnea with moderate exertion, ambulation with a device, and 5+ medications. Fall-risk and caregiver items (M2102) suggest the patient needs supervision support that is not in the plan.",
+  "oasis": [
+   {
+    "item": "M1033",
+    "section": "Risk for hospitalization",
+    "description": "Risk for hospitalization",
+    "first": "1 - History of falls; 3 - 2+ hospitalizations in 6 months; 5 - Currently taking 5+ medications",
+    "latest": "1 - History of falls; 3 - 2+ hospitalizations in 6 months; 5 - Currently taking 5+ medications",
+    "first_timepoint": "01 - Start of care",
+    "latest_timepoint": "01 - Start of care",
+    "changed": false,
+    "key_item": true
+   },
+   {
+    "item": "M1400",
+    "section": "Respiratory status",
+    "description": "When is the patient dyspneic",
+    "first": "2 - With moderate exertion",
+    "latest": "2 - With moderate exertion",
+    "first_timepoint": "01 - Start of care",
+    "latest_timepoint": "01 - Start of care",
+    "changed": false,
+    "key_item": true
+   },
+   {
+    "item": "M1850",
+    "section": "ADL / IADL",
+    "description": "Transferring",
+    "first": "1 - Transfers with minimal human assistance or device",
+    "latest": "1 - Transfers with minimal human assistance or device",
+    "first_timepoint": "01 - Start of care",
+    "latest_timepoint": "01 - Start of care",
+    "changed": false,
+    "key_item": true
+   },
+   {
+    "item": "M1860",
+    "section": "ADL / IADL",
+    "description": "Ambulation / locomotion",
+    "first": "2 - Requires use of a two-handed device (walker)",
+    "latest": "2 - Requires use of a two-handed device (walker)",
+    "first_timepoint": "01 - Start of care",
+    "latest_timepoint": "01 - Start of care",
+    "changed": false,
+    "key_item": true
+   },
+   {
+    "item": "M2020",
+    "section": "Medications",
+    "description": "Management of oral medications",
+    "first": "2 - Able if another person prepares",
+    "latest": "2 - Able if another person prepares",
+    "first_timepoint": "01 - Start of care",
+    "latest_timepoint": "01 - Start of care",
+    "changed": false,
+    "key_item": true
+   },
+   {
+    "item": "M1242",
+    "section": "Pain",
+    "description": "Frequency of pain interfering with activity",
+    "first": "1 - Less often than daily",
+    "latest": "1 - Less often than daily",
+    "first_timepoint": "01 - Start of care",
+    "latest_timepoint": "01 - Start of care",
+    "changed": false,
+    "key_item": true
+   },
+   {
+    "item": "M1700",
+    "section": "Neuro / cognitive",
+    "description": "Cognitive functioning",
+    "first": "1 - Requires prompting under stressful conditions",
+    "latest": "1 - Requires prompting under stressful conditions",
+    "first_timepoint": "01 - Start of care",
+    "latest_timepoint": "01 - Start of care",
+    "changed": false,
+    "key_item": true
+   },
+   {
+    "item": "M1100",
+    "section": "Living arrangements",
+    "description": "Patient living situation",
+    "first": "Lives alone; occasional assistance",
+    "latest": "Lives alone; occasional assistance",
+    "first_timepoint": "01 - Start of care",
+    "latest_timepoint": "01 - Start of care",
+    "changed": false,
+    "key_item": true
+   },
+   {
+    "item": "M2102",
+    "section": "Care management",
+    "description": "Supervision and safety",
+    "first": "2 - Non-agency caregiver(s) need training / supportive services",
+    "latest": "2 - Non-agency caregiver(s) need training / supportive services",
+    "first_timepoint": "01 - Start of care",
+    "latest_timepoint": "01 - Start of care",
+    "changed": false,
+    "key_item": true
+   },
+   {
+    "item": "M1311",
+    "section": "Integumentary",
+    "description": "Number of stage 2 pressure ulcers",
+    "first": "1",
+    "latest": "1",
+    "first_timepoint": "01 - Start of care",
+    "latest_timepoint": "01 - Start of care",
+    "changed": false,
+    "key_item": true
+   },
+   {
+    "item": "M1200",
+    "section": "Sensory",
+    "description": "Vision",
+    "first": "1 - Partially impaired",
+    "latest": "1 - Partially impaired",
+    "first_timepoint": "01 - Start of care",
+    "latest_timepoint": "01 - Start of care",
+    "changed": false,
+    "key_item": false
+   }
+  ]
+ },
+ "discharge_recommendation": null,
+ "care_network": {
+  "has_pcp": true,
+  "pcp_name": "Community Internal Medicine",
+  "pcp_last_visit_days": 166,
+  "ma_eligible": true,
+  "cwpco_enrolled": false,
+  "cwrx_enrolled": false,
+  "nearest_cwpco_clinic": "CenterWell Senior Primary Care - Hickory",
+  "nearest_cwpco_miles": 4.2,
+  "cwpco_clinics_10mi": 2,
+  "cwpco_clinics_20mi": 3,
+  "active_med_count": 11,
+  "refer_cwpco": {
+   "indicator": "Refer",
+   "reason": "CW PCO clinic 4.2 mi away; clinic close by."
+  },
+  "refer_cwrx": {
+   "indicator": "Refer",
+   "reason": "11 active medications; home delivery and pharmacist review support adherence."
+  }
+ },
+ "medications": {
+  "summary": "11 active medications including two high-risk: apixaban (bleeding risk) and insulin glargine (hypoglycemia). Understanding checked on 2 of 7 SN visits, last DAY+10. Missed doses reported DAY+15 and DAY+22; impaired vision makes labels hard to read.",
+  "active_count": 11,
+  "high_risk": [
+   {
+    "name": "Apixaban 5 mg BID",
+    "drug_class": "Anticoagulant",
+    "reason": "Anticoagulant: needs teaching and monitoring"
+   },
+   {
+    "name": "Insulin glargine 20 units nightly",
+    "drug_class": "Insulin",
+    "reason": "Insulin: needs teaching and monitoring"
+   }
+  ],
+  "checks": [
+   {
+    "episode_day": 1,
+    "discipline": "SN",
+    "understanding": true,
+    "teaching": true,
+    "adherent": true
+   },
+   {
+    "episode_day": 2,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 3,
+    "discipline": "SN",
+    "understanding": false,
+    "teaching": false,
+    "adherent": null
+   },
+   {
+    "episode_day": 5,
+    "discipline": "SN",
+    "understanding": false,
+    "teaching": false,
+    "adherent": null
+   },
+   {
+    "episode_day": 8,
+    "discipline": "SN",
+    "understanding": false,
+    "teaching": true,
+    "adherent": true
+   },
+   {
+    "episode_day": 9,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 10,
+    "discipline": "SN",
+    "understanding": true,
+    "teaching": true,
+    "adherent": true
+   },
+   {
+    "episode_day": 10,
+    "discipline": "HHA",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 11,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 15,
+    "discipline": "SN",
+    "understanding": false,
+    "teaching": true,
+    "adherent": false
+   },
+   {
+    "episode_day": 16,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 17,
+    "discipline": "HHA",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 18,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 22,
+    "discipline": "SN",
+    "understanding": false,
+    "teaching": false,
+    "adherent": false
+   },
+   {
+    "episode_day": 24,
+    "discipline": "HHA",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 24,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 29,
+    "discipline": "PT",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   },
+   {
+    "episode_day": 31,
+    "discipline": "HHA",
+    "understanding": null,
+    "teaching": null,
+    "adherent": null
+   }
+  ],
+  "adherence_concerns": 2,
+  "visits_with_check": 2,
+  "visits_total": 7,
+  "last_check_day": 10,
+  "flag": "Adherence concern documented on 2 visit(s)."
+ },
+ "care_review": {
+  "assessments_summary": "SN completed cardiopulmonary and edema assessments at every SN visit and medication review twice. Fall-risk (MAHC-10) was done at SOC only. Pain and depression screens were done at SOC and not repeated. No home-safety assessment has been documented because the OT evaluation was not delivered.",
+  "assessments": [
+   {
+    "assessment": "Cardiopulmonary assessment",
+    "discipline": "SN",
+    "count": 7,
+    "last_day": 22
+   },
+   {
+    "assessment": "Edema assessment",
+    "discipline": "SN",
+    "count": 7,
+    "last_day": 22
+   },
+   {
+    "assessment": "Gait and balance assessment",
+    "discipline": "PT",
+    "count": 3,
+    "last_day": 29
+   },
+   {
+    "assessment": "Medication review",
+    "discipline": "SN",
+    "count": 2,
+    "last_day": 15
+   },
+   {
+    "assessment": "Depression screen (PHQ-2)",
+    "discipline": "SN",
+    "count": 1,
+    "last_day": 1
+   },
+   {
+    "assessment": "Fall-risk assessment (MAHC-10)",
+    "discipline": "SN",
+    "count": 1,
+    "last_day": 1
+   },
+   {
+    "assessment": "Pain assessment",
+    "discipline": "SN",
+    "count": 1,
+    "last_day": 1
+   }
+  ],
+  "interventions_summary": "Most interventions targeted HF self-management: HF teaching (5 visits), daily-weight teaching (3), medication teaching (3) and gait/transfer training by PT (6). Anticoagulant bleeding-precaution teaching was documented once. No intervention addressed the living-alone risk, and no diuretic or weight-escalation intervention was documented after the DAY+29 weight alert.",
+  "interventions": [
+   {
+    "intervention": "Gait and transfer training",
+    "goal": "Safe transfers with walker within 4 weeks",
+    "discipline": "PT",
+    "count": 6,
+    "last_day": 24
+   },
+   {
+    "intervention": "HF teaching",
+    "goal": "Verbalize 3 signs of HF exacerbation within 2 weeks",
+    "discipline": "SN",
+    "count": 5,
+    "last_day": 10
+   },
+   {
+    "intervention": "Daily-weight teaching",
+    "goal": "Weigh daily and keep a log",
+    "discipline": "SN",
+    "count": 3,
+    "last_day": 15
+   },
+   {
+    "intervention": "Medication teaching",
+    "goal": null,
+    "discipline": "SN",
+    "count": 3,
+    "last_day": 22
+   },
+   {
+    "intervention": "Anticoagulant bleeding-precaution teaching",
+    "goal": "Verbalize anticoagulant bleeding precautions within 3 weeks",
+    "discipline": "SN",
+    "count": 1,
+    "last_day": 15
+   }
+  ],
+  "adverse_events_summary": "One near-fall on DAY+19 (caught by daughter, no injury) and a weight alert on DAY+29 without documented physician notification. No ED visit or hospitalization since SOC.",
+  "adverse_events": [
+   {
+    "episode_day": 19,
+    "type": "Near-fall",
+    "severity": "No injury",
+    "detail": "Lost balance getting up from chair; caught by daughter"
+   }
+  ],
+  "visit_themes": [
+   "Shortness of breath when walking to the bathroom",
+   "Forgets to weigh on days the daughter does not visit",
+   "Worried about bleeding on apixaban",
+   "Wants to stay at home and avoid another hospital stay",
+   "Difficulty reading medication labels"
+  ]
+ },
+ "gap_analysis": {
+  "missing_interventions": [
+   {
+    "goal": "Weigh daily and keep a log",
+    "intervention": "Large-print weight log and daily reminder call; escalate gain >3 lb/2 days to MD",
+    "discipline": "SN"
+   },
+   {
+    "goal": "Safe transfers with walker within 4 weeks",
+    "intervention": "Home exercise program for sit-to-stand with written large-print copy",
+    "discipline": "PT"
+   },
+   {
+    "goal": "Home-safety evaluation completed",
+    "intervention": "OT home-safety evaluation (grab bars, rugs, lighting)",
+    "discipline": "OT"
+   },
+   {
+    "goal": "MSW consult for social and community resources within 3 weeks",
+    "intervention": "MSW visit for meal delivery and personal emergency response system",
+    "discipline": "MSW"
+   }
+  ],
+  "missing_assessments": [
+   {
+    "item": "Orthostatic blood pressure",
+    "type": "Vitals",
+    "reason": "Near-fall on DAY+19 while on diuretic"
+   },
+   {
+    "item": "Repeat fall-risk (MAHC-10)",
+    "type": "Assessment",
+    "reason": "Last done at SOC; near-fall since"
+   },
+   {
+    "item": "Lung sounds / edema grading each SN visit",
+    "type": "Assessment",
+    "reason": "Weight trend up; edema noted DAY+33 without grade"
+   },
+   {
+    "item": "Daily home weights reported by phone",
+    "type": "Vitals",
+    "reason": "No SN visit scheduled; weight is the earliest HF warning sign"
+   }
+  ],
+  "visit_goals": [
+   {
+    "discipline": "SN",
+    "visit_goal": "Patient states HF zones and when to call using the large-print zone sheet",
+    "supports_goal": "Stay at home; HF self-management"
+   },
+   {
+    "discipline": "SN",
+    "visit_goal": "Weight log reviewed every visit; MD notified for gain >3 lb/2 days",
+    "supports_goal": "Weigh daily and keep a log"
+   },
+   {
+    "discipline": "PT",
+    "visit_goal": "Sit-to-stand x5 with walker without loss of balance",
+    "supports_goal": "Safe transfers with walker"
+   },
+   {
+    "discipline": "MSW",
+    "visit_goal": "Community resources and emergency response set up",
+    "supports_goal": "Stay at home living alone"
+   }
+  ]
+ },
+ "kpis": {
+  "visits_completed": 18,
+  "scheduled_visits": 4,
+  "missed_care": 3,
+  "ip_events": 1,
+  "vitals_days": 10
+ },
+ "events": [
+  {
+   "episode_day": -6,
+   "type": "Inpatient event",
+   "detail": "HF exacerbation; discharged 2 days before SOC",
+   "source": "Source: inpatient events",
+   "flag": false
+  },
+  {
+   "episode_day": 17,
+   "type": "Client log note",
+   "detail": "Patient not home for SN visit; voicemail left",
+   "source": "Source: client logs",
+   "flag": false
+  },
+  {
+   "episode_day": 29,
+   "type": "Vitals alert",
+   "detail": "Weight above parameter (+5.4 lb from baseline)",
+   "source": "No physician notification found",
+   "flag": true
+  },
+  {
+   "episode_day": 29,
+   "type": "Vitals alert",
+   "detail": "Pulse 102 above parameter (100)",
+   "source": "Physician notified",
+   "flag": false
+  },
+  {
+   "episode_day": 31,
+   "type": "Client log note",
+   "detail": "Patient requested reschedule; not rebooked",
+   "source": "Source: client logs",
+   "flag": false
+  }
+ ],
+ "provenance": {
+  "sources": {
+   "risk_scores": "csv",
+   "risk_drivers": "csv",
+   "llm_summary": "csv",
+   "llm_goals": "csv",
+   "alignment": "csv",
+   "episodes": "csv",
+   "patient_profile": "csv",
+   "assessments": "csv",
+   "interventions": "csv",
+   "adverse_events": "csv",
+   "wounds": "csv",
+   "diagnoses": "csv",
+   "oasis": "csv",
+   "care_network": "csv",
+   "medications": "csv",
+   "visits": "csv",
+   "sched": "csv",
+   "orders": "csv",
+   "vitals": "csv",
+   "vs_alerts": "csv",
+   "client_logs": "csv",
+   "ip_events": "csv"
+  },
+  "vitals_days": 10,
+  "goal_count": 8
+ }
+}

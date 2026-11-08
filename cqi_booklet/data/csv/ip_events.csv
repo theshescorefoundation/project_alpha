@@ -1,0 +1,4 @@
+patient_id,admit_dt,event_desc
+9000123,2026-07-04,HF exacerbation; discharged 2 days before SOC
+9000231,2026-08-09,"ED visit, COPD exacerbation; treat and release"
+9000231,2025-11-02,"Old admission - outside window, must be excluded"
