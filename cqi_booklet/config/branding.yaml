@@ -2,6 +2,7 @@
 stage_label: "Proof of concept"          # footer, every page. Set to "" to hide (e.g. after go-live)
 sample_label: "Sample data"              # added to the footer ONLY when the run uses --sample (synthetic CSVs)
 footer_note: "Internal use only  \u00b7  Contains PHI  \u00b7  AI-assisted drafts for clinical review"
+generated_by: "Project Alpha \u2013 Clinical Quality Intelligence"   # every page: "Report generated <date> from <this>"
 prepared_for: "CWHH Clinical Quality Team"
 produced_by: "CW Data Science & Applied AI - HH Team"
 vision_today: >-

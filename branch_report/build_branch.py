@@ -166,6 +166,10 @@ def footer(c, s, page, total):
     c.setFont(FB, 8.5); c.setFillColor(C["light_blue"]); c.drawRightString(W - M, 42, f"Page {page} of {total}")
     c.setFont(F, 7.4); c.setFillColor(C["mid_gray"])
     c.drawRightString(W - M, 31, f"{s['branch_label']}  ·  Run {mdy(s['as_of_date'])}")
+    from datetime import date
+    c.setFont(F, 7.2)
+    c.drawRightString(W - M, 20, f"Report generated {date.today():%m/%d/%Y} from "
+                                 f"{BRAND.get('generated_by', 'Project Alpha – Clinical Quality Intelligence')}")
 
 
 def subhead(c, text, y, note=None):

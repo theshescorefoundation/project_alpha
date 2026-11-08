@@ -225,7 +225,17 @@ def blue_bar_header(c, top, height, icon="icon_checklist.png", icon_d=None):
         s = d * 0.62; img(c, icon, cx - s / 2, cy - s / 2, w=s, h=s)
     return y0 - 9
 
+def generated_footer(c):
+    """[Project Alpha] 'Report generated <date> from Project Alpha - Clinical Quality Intelligence' on every page.
+    Text: branding.yaml `generated_by`; date: the day the PDF is built."""
+    from datetime import date
+    src = BRAND.get("generated_by", "Project Alpha – Clinical Quality Intelligence")
+    c.setFont("Arial", 7.2); c.setFillColor(MID_GRAY)
+    c.drawRightString(W - M, 20, f"Report generated {date.today():%m/%d/%Y} from {src}")
+
+
 def footer(c, page, d, logo=True, show_page=True):
+    generated_footer(c)
     if logo:
         img(c, "logo_cwhh.png", M, 22, h=34)
     x = M + 158 if logo else M
@@ -446,6 +456,7 @@ def page_cover(c, d):
          M, yb + 2, CW, ps(8.8, MID_GRAY, lead=11.4))
     c.setFont("Arial", 7.6); c.setFillColor(MID_GRAY)                      # cover: privacy line only
     c.drawString(M, 31, BRAND.get("footer_note", "Internal use only  \u00b7  Contains PHI"))
+    generated_footer(c)
 
 
 def page_about(c, d):
@@ -1605,6 +1616,7 @@ def _overview_vitals_page(c, items, branch, as_of, sample, page_label):
     c.showPage()
 
 def _ov_footer(c, sample):
+    generated_footer(c)
     c.setFont("Arial", 7.6); c.setFillColor(MID_GRAY); c.drawString(M, 42, BRAND.get("footer_note", ""))
     stage = "  \u00b7  ".join(t for t in [BRAND.get("stage_label", "Proof of concept"), BRAND.get("sample_label", "Sample data") if sample else ""] if t)
     if stage:
